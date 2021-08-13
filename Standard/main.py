@@ -631,7 +631,7 @@ plot_initial_graph()
 root.protocol("WM_DELETE_WINDOW", exit_btn_command)  # handle event when window is closed by user
 
 # ani = animation.FuncAnimation(fig, plot_graph, interval=500)
-ani = animation.FuncAnimation(fig, animate, interval=500)
+ani = animation.FuncAnimation(fig, animate, interval=200)
 # pause animation
 ani.event_source.stop()
 
