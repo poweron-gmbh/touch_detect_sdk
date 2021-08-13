@@ -36,7 +36,7 @@ global data_logger_file
 global data_writer
 global client
 BLE_address = "00:00:00:00:00:00"
-BLE_device_name = "P2PSRV1"
+BLE_device_name = "PWRON1"
 BLE_device_found = False
 sensor_array_size = 36
 data2 = np.zeros([6, 6])
