@@ -82,20 +82,37 @@ def plot_graph(data_plot):
     sensor_row = ["Row1", "Row2", "Row3", "Row4", "Row5", "Row6"]
     sensor_col = ["Col1", "Col2", "Col3", "Col4", "Col5", "Col6"]
 
-    ax.clear()
-    ax.imshow(data_plot, cmap='Purples', vmin=0, vmax=4095)
+    # ax.clear()
+    # ax.imshow(data_plot, cmap='Purples', vmin=0, vmax=4095)
+
+    voltage = np.zeros([6, 6])
+    resistance = np.zeros([6, 6])
+
+    for i in range(len(sensor_row)):
+        for j in range(len(sensor_col)):
+            voltage[i, j] = data_plot[i, j] / 4095 * 3.3
+            # Resistance measurement => R1 = R2 * (Vi-Vo)/Vo
+            if data_plot[i, j] == 0:
+                data_plot[i, j] = 1
+
+            resistance[i, j] = round(511 * ((4095 - data_plot[i, j]) / data_plot[i, j]), 1)
+            voltage[i, j] = round(voltage[i, j], 2)
+            # if resistance[i, j] > 1000:
+            #     voltage[i, j] = 1
+            # else:
+            #     voltage[i, j] = 0
 
     ax.clear()  # clear the plot first
     if graph_state == 0:
-        ax.imshow(data_plot, cmap='Purples', vmin=0, vmax=4095)
+        # ax.imshow(voltage, cmap='Purples', vmin=0, vmax=255)
+        ax.imshow(voltage, cmap='Purples_r', vmin=2.5, vmax=3.3)
 
     elif graph_state == 1:
-        data_plot = data_plot / 10
-        ax.imshow(data_plot, cmap='Purples', vmin=0, vmax=409.5)
+        ax.imshow(resistance, cmap='Purples_r', vmin=0, vmax=7000)
 
     elif graph_state == 2:
-        data_plot = data_plot / 100
-        ax.imshow(data_plot, cmap='Purples', vmin=0, vmax=40.95)
+        data_plot = data_plot
+        ax.imshow(data_plot, cmap='Purples_r', vmin=190, vmax=255)
 
     # We want to show all ticks...
     ax.set_xticks(np.arange(len(sensor_col)))
@@ -107,18 +124,19 @@ def plot_graph(data_plot):
     # Loop over data dimensions and create text annotations.
     for i in range(len(sensor_row)):
         for j in range(len(sensor_col)):
+            # ax.text(j, i, data_plot[i, j], ha="center", va="center", color="black")
             if graph_state == 0:
-                if data_plot[i, j] > 2047:
-                    ax.text(j, i, data_plot[i, j], ha="center", va="center", color="w")
+                if voltage[i, j] < 2.8:
+                    ax.text(j, i, voltage[i, j], ha="center", va="center", color="w")
                 else:
-                    ax.text(j, i, data_plot[i, j], ha="center", va="center", color="black")
+                    ax.text(j, i, voltage[i, j], ha="center", va="center", color="black")
             elif graph_state == 1:
-                if data_plot[i, j] > 204.7:
-                    ax.text(j, i, data_plot[i, j], ha="center", va="center", color="w")
+                if resistance[i, j] < 2000:
+                    ax.text(j, i, "{:.0f}".format(resistance[i, j]), ha="center", va="center", color="w")
                 else:
-                    ax.text(j, i, data_plot[i, j], ha="center", va="center", color="black")
+                    ax.text(j, i, "{:.0f}".format(resistance[i, j]), ha="center", va="center", color="black")
             elif graph_state == 2:
-                if data_plot[i, j] > 20.47:
+                if data_plot[i, j] < 220:
                     ax.text(j, i, data_plot[i, j], ha="center", va="center", color="w")
                 else:
                     ax.text(j, i, data_plot[i, j], ha="center", va="center", color="black")
