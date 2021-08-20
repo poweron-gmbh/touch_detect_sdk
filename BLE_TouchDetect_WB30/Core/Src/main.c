@@ -112,6 +112,7 @@ int main(void)
   uint8_t UART_Transmit_ADC_values = 0;
   uint8_t ADC_Read_Array_Complete = 0;
   uint16_t BatV = 0;
+  GPIO_InitTypeDef GPIO_ChgMode = {0}; //This is used to change GPIO mode
 
   /**
    * The OPTVERR flag is wrongly set at power on
@@ -220,12 +221,21 @@ int main(void)
 		TimeReady = 0; // reset trigger
 
 		// start GPIO1
-		HAL_GPIO_WritePin(GPIO1_GPIO_Port, GPIO1_Pin, GPIO_PIN_SET); // GPIO1
-		HAL_GPIO_WritePin(GPIO2_GPIO_Port, GPIO2_Pin, GPIO_PIN_RESET); // GPIO2
-		HAL_GPIO_WritePin(GPIO3_GPIO_Port, GPIO3_Pin, GPIO_PIN_RESET); // GPIO3
-		HAL_GPIO_WritePin(GPIO4_GPIO_Port, GPIO4_Pin, GPIO_PIN_RESET); // GPIO4
-		HAL_GPIO_WritePin(GPIO5_GPIO_Port, GPIO5_Pin, GPIO_PIN_RESET); // GPIO5
-		HAL_GPIO_WritePin(GPIO6_GPIO_Port, GPIO6_Pin, GPIO_PIN_RESET); // GPIO6
+
+		// Set GPIO from to Output Push Pull mode
+		GPIO_ChgMode.Pin = GPIO1_Pin;
+		GPIO_ChgMode.Mode = GPIO_MODE_OUTPUT_PP;
+		GPIO_ChgMode.Pull = GPIO_NOPULL;
+		GPIO_ChgMode.Speed = GPIO_SPEED_FREQ_LOW;
+		HAL_GPIO_Init(GPIO1_GPIO_Port, &GPIO_ChgMode);
+		HAL_GPIO_WritePin(GPIO1_GPIO_Port, GPIO1_Pin, GPIO_PIN_SET);
+
+//		HAL_GPIO_WritePin(GPIO1_GPIO_Port, GPIO1_Pin, GPIO_PIN_SET); // GPIO1
+//		HAL_GPIO_WritePin(GPIO2_GPIO_Port, GPIO2_Pin, GPIO_PIN_RESET); // GPIO2
+//		HAL_GPIO_WritePin(GPIO3_GPIO_Port, GPIO3_Pin, GPIO_PIN_RESET); // GPIO3
+//		HAL_GPIO_WritePin(GPIO4_GPIO_Port, GPIO4_Pin, GPIO_PIN_RESET); // GPIO4
+//		HAL_GPIO_WritePin(GPIO5_GPIO_Port, GPIO5_Pin, GPIO_PIN_RESET); // GPIO5
+//		HAL_GPIO_WritePin(GPIO6_GPIO_Port, GPIO6_Pin, GPIO_PIN_RESET); // GPIO6
 
 		// start adc conversion
 		HAL_ADC_Start_DMA(&hadc1, &ADC_Buffer, 6); //This needs to be changed later, ADC reads 7 values
@@ -301,44 +311,130 @@ int main(void)
 
 		// Set the appropriate GPIO pins
 		if (SequenceLoop == 1) {
-			HAL_GPIO_WritePin(GPIO1_GPIO_Port, GPIO1_Pin, GPIO_PIN_RESET); // GPIO1
-			HAL_GPIO_WritePin(GPIO2_GPIO_Port, GPIO2_Pin, GPIO_PIN_SET);   // GPIO2
-			HAL_GPIO_WritePin(GPIO3_GPIO_Port, GPIO3_Pin, GPIO_PIN_RESET); // GPIO3
-			HAL_GPIO_WritePin(GPIO4_GPIO_Port, GPIO4_Pin, GPIO_PIN_RESET); // GPIO4
-			HAL_GPIO_WritePin(GPIO5_GPIO_Port, GPIO5_Pin, GPIO_PIN_RESET); // GPIO5
-			HAL_GPIO_WritePin(GPIO6_GPIO_Port, GPIO6_Pin, GPIO_PIN_RESET); // GPIO6
+			// Reset GPIO output to 0V/GND
+			HAL_GPIO_WritePin(GPIO1_GPIO_Port, GPIO1_Pin, GPIO_PIN_RESET);
+
+			// Set GPIO back to Analog
+			GPIO_ChgMode.Pin = GPIO1_Pin;
+			GPIO_ChgMode.Mode = GPIO_MODE_ANALOG;
+			GPIO_ChgMode.Pull = GPIO_NOPULL;
+			HAL_GPIO_Init(GPIO1_GPIO_Port, &GPIO_ChgMode);
+
+			// Set GPIO to Output Push Pull
+			GPIO_ChgMode.Pin = GPIO2_Pin;
+			GPIO_ChgMode.Mode = GPIO_MODE_OUTPUT_PP;
+			GPIO_ChgMode.Pull = GPIO_NOPULL;
+			GPIO_ChgMode.Speed = GPIO_SPEED_FREQ_LOW;
+			HAL_GPIO_Init(GPIO2_GPIO_Port, &GPIO_ChgMode);
+			HAL_GPIO_WritePin(GPIO2_GPIO_Port, GPIO2_Pin, GPIO_PIN_SET);
+
+//			HAL_GPIO_WritePin(GPIO1_GPIO_Port, GPIO1_Pin, GPIO_PIN_RESET); // GPIO1
+//			HAL_GPIO_WritePin(GPIO2_GPIO_Port, GPIO2_Pin, GPIO_PIN_SET);   // GPIO2
+//			HAL_GPIO_WritePin(GPIO3_GPIO_Port, GPIO3_Pin, GPIO_PIN_RESET); // GPIO3
+//			HAL_GPIO_WritePin(GPIO4_GPIO_Port, GPIO4_Pin, GPIO_PIN_RESET); // GPIO4
+//			HAL_GPIO_WritePin(GPIO5_GPIO_Port, GPIO5_Pin, GPIO_PIN_RESET); // GPIO5
+//			HAL_GPIO_WritePin(GPIO6_GPIO_Port, GPIO6_Pin, GPIO_PIN_RESET); // GPIO6
 		}
 		else if (SequenceLoop == 2) {
-			HAL_GPIO_WritePin(GPIO1_GPIO_Port, GPIO1_Pin, GPIO_PIN_RESET); // GPIO1
-			HAL_GPIO_WritePin(GPIO2_GPIO_Port, GPIO2_Pin, GPIO_PIN_RESET); // GPIO2
-			HAL_GPIO_WritePin(GPIO3_GPIO_Port, GPIO3_Pin, GPIO_PIN_SET);   // GPIO3
-			HAL_GPIO_WritePin(GPIO4_GPIO_Port, GPIO4_Pin, GPIO_PIN_RESET); // GPIO4
-			HAL_GPIO_WritePin(GPIO5_GPIO_Port, GPIO5_Pin, GPIO_PIN_RESET); // GPIO5
-			HAL_GPIO_WritePin(GPIO6_GPIO_Port, GPIO6_Pin, GPIO_PIN_RESET); // GPIO6
+
+			// Reset GPIO output to 0V/GND
+			HAL_GPIO_WritePin(GPIO2_GPIO_Port, GPIO2_Pin, GPIO_PIN_RESET);
+
+			// Set GPIO back to Analog
+			GPIO_ChgMode.Pin = GPIO2_Pin;
+			GPIO_ChgMode.Mode = GPIO_MODE_ANALOG;
+			GPIO_ChgMode.Pull = GPIO_NOPULL;
+			HAL_GPIO_Init(GPIO2_GPIO_Port, &GPIO_ChgMode);
+
+			// Set GPIO to Output Push Pull
+			GPIO_ChgMode.Pin = GPIO3_Pin;
+			GPIO_ChgMode.Mode = GPIO_MODE_OUTPUT_PP;
+			GPIO_ChgMode.Pull = GPIO_NOPULL;
+			GPIO_ChgMode.Speed = GPIO_SPEED_FREQ_LOW;
+			HAL_GPIO_Init(GPIO3_GPIO_Port, &GPIO_ChgMode);
+			HAL_GPIO_WritePin(GPIO3_GPIO_Port, GPIO3_Pin, GPIO_PIN_SET);
+
+//			HAL_GPIO_WritePin(GPIO1_GPIO_Port, GPIO1_Pin, GPIO_PIN_RESET); // GPIO1
+//			HAL_GPIO_WritePin(GPIO2_GPIO_Port, GPIO2_Pin, GPIO_PIN_RESET); // GPIO2
+//			HAL_GPIO_WritePin(GPIO3_GPIO_Port, GPIO3_Pin, GPIO_PIN_SET);   // GPIO3
+//			HAL_GPIO_WritePin(GPIO4_GPIO_Port, GPIO4_Pin, GPIO_PIN_RESET); // GPIO4
+//			HAL_GPIO_WritePin(GPIO5_GPIO_Port, GPIO5_Pin, GPIO_PIN_RESET); // GPIO5
+//			HAL_GPIO_WritePin(GPIO6_GPIO_Port, GPIO6_Pin, GPIO_PIN_RESET); // GPIO6
 		}
 		else if (SequenceLoop == 3) {
-			HAL_GPIO_WritePin(GPIO1_GPIO_Port, GPIO1_Pin, GPIO_PIN_RESET); // GPIO1
-			HAL_GPIO_WritePin(GPIO2_GPIO_Port, GPIO2_Pin, GPIO_PIN_RESET); // GPIO2
-			HAL_GPIO_WritePin(GPIO3_GPIO_Port, GPIO3_Pin, GPIO_PIN_RESET); // GPIO3
-			HAL_GPIO_WritePin(GPIO4_GPIO_Port, GPIO4_Pin, GPIO_PIN_SET); // GPIO4
-			HAL_GPIO_WritePin(GPIO5_GPIO_Port, GPIO5_Pin, GPIO_PIN_RESET); // GPIO5
-			HAL_GPIO_WritePin(GPIO6_GPIO_Port, GPIO6_Pin, GPIO_PIN_RESET); // GPIO6
+			// Reset GPIO output to 0V/GND
+			HAL_GPIO_WritePin(GPIO3_GPIO_Port, GPIO3_Pin, GPIO_PIN_RESET);
+
+			// Set GPIO back to Analog
+			GPIO_ChgMode.Pin = GPIO3_Pin;
+			GPIO_ChgMode.Mode = GPIO_MODE_ANALOG;
+			GPIO_ChgMode.Pull = GPIO_NOPULL;
+			HAL_GPIO_Init(GPIO3_GPIO_Port, &GPIO_ChgMode);
+
+			// Set GPIO to Output Push Pull
+			GPIO_ChgMode.Pin = GPIO4_Pin;
+			GPIO_ChgMode.Mode = GPIO_MODE_OUTPUT_PP;
+			GPIO_ChgMode.Pull = GPIO_NOPULL;
+			GPIO_ChgMode.Speed = GPIO_SPEED_FREQ_LOW;
+			HAL_GPIO_Init(GPIO4_GPIO_Port, &GPIO_ChgMode);
+			HAL_GPIO_WritePin(GPIO4_GPIO_Port, GPIO4_Pin, GPIO_PIN_SET);
+
+//			HAL_GPIO_WritePin(GPIO1_GPIO_Port, GPIO1_Pin, GPIO_PIN_RESET); // GPIO1
+//			HAL_GPIO_WritePin(GPIO2_GPIO_Port, GPIO2_Pin, GPIO_PIN_RESET); // GPIO2
+//			HAL_GPIO_WritePin(GPIO3_GPIO_Port, GPIO3_Pin, GPIO_PIN_RESET); // GPIO3
+//			HAL_GPIO_WritePin(GPIO4_GPIO_Port, GPIO4_Pin, GPIO_PIN_SET); // GPIO4
+//			HAL_GPIO_WritePin(GPIO5_GPIO_Port, GPIO5_Pin, GPIO_PIN_RESET); // GPIO5
+//			HAL_GPIO_WritePin(GPIO6_GPIO_Port, GPIO6_Pin, GPIO_PIN_RESET); // GPIO6
 		}
 		else if (SequenceLoop == 4) {
-			HAL_GPIO_WritePin(GPIO1_GPIO_Port, GPIO1_Pin, GPIO_PIN_RESET); // GPIO1
-			HAL_GPIO_WritePin(GPIO2_GPIO_Port, GPIO2_Pin, GPIO_PIN_RESET); // GPIO2
-			HAL_GPIO_WritePin(GPIO3_GPIO_Port, GPIO3_Pin, GPIO_PIN_RESET); // GPIO3
-			HAL_GPIO_WritePin(GPIO4_GPIO_Port, GPIO4_Pin, GPIO_PIN_RESET); // GPIO4
-			HAL_GPIO_WritePin(GPIO5_GPIO_Port, GPIO5_Pin, GPIO_PIN_SET); // GPIO5
-			HAL_GPIO_WritePin(GPIO6_GPIO_Port, GPIO6_Pin, GPIO_PIN_RESET); // GPIO6
+			// Reset GPIO output to 0V/GND
+			HAL_GPIO_WritePin(GPIO4_GPIO_Port, GPIO4_Pin, GPIO_PIN_RESET);
+
+			// Set GPIO back to Analog
+			GPIO_ChgMode.Pin = GPIO4_Pin;
+			GPIO_ChgMode.Mode = GPIO_MODE_ANALOG;
+			GPIO_ChgMode.Pull = GPIO_NOPULL;
+			HAL_GPIO_Init(GPIO4_GPIO_Port, &GPIO_ChgMode);
+
+			// Set GPIO to Output Push Pull
+			GPIO_ChgMode.Pin = GPIO5_Pin;
+			GPIO_ChgMode.Mode = GPIO_MODE_OUTPUT_PP;
+			GPIO_ChgMode.Pull = GPIO_NOPULL;
+			GPIO_ChgMode.Speed = GPIO_SPEED_FREQ_LOW;
+			HAL_GPIO_Init(GPIO5_GPIO_Port, &GPIO_ChgMode);
+			HAL_GPIO_WritePin(GPIO5_GPIO_Port, GPIO5_Pin, GPIO_PIN_SET);
+
+//			HAL_GPIO_WritePin(GPIO1_GPIO_Port, GPIO1_Pin, GPIO_PIN_RESET); // GPIO1
+//			HAL_GPIO_WritePin(GPIO2_GPIO_Port, GPIO2_Pin, GPIO_PIN_RESET); // GPIO2
+//			HAL_GPIO_WritePin(GPIO3_GPIO_Port, GPIO3_Pin, GPIO_PIN_RESET); // GPIO3
+//			HAL_GPIO_WritePin(GPIO4_GPIO_Port, GPIO4_Pin, GPIO_PIN_RESET); // GPIO4
+//			HAL_GPIO_WritePin(GPIO5_GPIO_Port, GPIO5_Pin, GPIO_PIN_SET); // GPIO5
+//			HAL_GPIO_WritePin(GPIO6_GPIO_Port, GPIO6_Pin, GPIO_PIN_RESET); // GPIO6
 		}
 		else if (SequenceLoop == 5) {
-			HAL_GPIO_WritePin(GPIO1_GPIO_Port, GPIO1_Pin, GPIO_PIN_RESET); // GPIO1
-			HAL_GPIO_WritePin(GPIO2_GPIO_Port, GPIO2_Pin, GPIO_PIN_RESET); // GPIO2
-			HAL_GPIO_WritePin(GPIO3_GPIO_Port, GPIO3_Pin, GPIO_PIN_RESET); // GPIO3
-			HAL_GPIO_WritePin(GPIO4_GPIO_Port, GPIO4_Pin, GPIO_PIN_RESET); // GPIO4
-			HAL_GPIO_WritePin(GPIO5_GPIO_Port, GPIO5_Pin, GPIO_PIN_RESET); // GPIO5
-			HAL_GPIO_WritePin(GPIO6_GPIO_Port, GPIO6_Pin, GPIO_PIN_SET); // GPIO6
+			// Reset GPIO output to 0V/GND
+			HAL_GPIO_WritePin(GPIO5_GPIO_Port, GPIO5_Pin, GPIO_PIN_RESET);
+
+			// Set GPIO back to Analog
+			GPIO_ChgMode.Pin = GPIO5_Pin;
+			GPIO_ChgMode.Mode = GPIO_MODE_ANALOG;
+			GPIO_ChgMode.Pull = GPIO_NOPULL;
+			HAL_GPIO_Init(GPIO5_GPIO_Port, &GPIO_ChgMode);
+
+			// Set GPIO to Output Push Pull
+			GPIO_ChgMode.Pin = GPIO6_Pin;
+			GPIO_ChgMode.Mode = GPIO_MODE_OUTPUT_PP;
+			GPIO_ChgMode.Pull = GPIO_NOPULL;
+			GPIO_ChgMode.Speed = GPIO_SPEED_FREQ_LOW;
+			HAL_GPIO_Init(GPIO6_GPIO_Port, &GPIO_ChgMode);
+			HAL_GPIO_WritePin(GPIO6_GPIO_Port, GPIO6_Pin, GPIO_PIN_SET);
+
+//			HAL_GPIO_WritePin(GPIO1_GPIO_Port, GPIO1_Pin, GPIO_PIN_RESET); // GPIO1
+//			HAL_GPIO_WritePin(GPIO2_GPIO_Port, GPIO2_Pin, GPIO_PIN_RESET); // GPIO2
+//			HAL_GPIO_WritePin(GPIO3_GPIO_Port, GPIO3_Pin, GPIO_PIN_RESET); // GPIO3
+//			HAL_GPIO_WritePin(GPIO4_GPIO_Port, GPIO4_Pin, GPIO_PIN_RESET); // GPIO4
+//			HAL_GPIO_WritePin(GPIO5_GPIO_Port, GPIO5_Pin, GPIO_PIN_RESET); // GPIO5
+//			HAL_GPIO_WritePin(GPIO6_GPIO_Port, GPIO6_Pin, GPIO_PIN_SET); // GPIO6
 		}
 
 		// once all ADC reading is done
@@ -349,12 +445,22 @@ int main(void)
 			}
 
 			// reset all GPIO
-			HAL_GPIO_WritePin(GPIO1_GPIO_Port, GPIO1_Pin, GPIO_PIN_RESET); // GPIO1
-			HAL_GPIO_WritePin(GPIO2_GPIO_Port, GPIO2_Pin, GPIO_PIN_RESET); // GPIO2
-			HAL_GPIO_WritePin(GPIO3_GPIO_Port, GPIO3_Pin, GPIO_PIN_RESET); // GPIO3
-			HAL_GPIO_WritePin(GPIO4_GPIO_Port, GPIO4_Pin, GPIO_PIN_RESET); // GPIO4
-			HAL_GPIO_WritePin(GPIO5_GPIO_Port, GPIO5_Pin, GPIO_PIN_RESET); // GPIO5
-			HAL_GPIO_WritePin(GPIO6_GPIO_Port, GPIO6_Pin, GPIO_PIN_RESET); // GPIO6
+			// Reset GPIO output to 0V/GND
+			HAL_GPIO_WritePin(GPIO6_GPIO_Port, GPIO6_Pin, GPIO_PIN_RESET);
+
+			// Set GPIO back to Analog
+			GPIO_ChgMode.Pin = GPIO6_Pin;
+			GPIO_ChgMode.Mode = GPIO_MODE_ANALOG;
+			GPIO_ChgMode.Pull = GPIO_NOPULL;
+			HAL_GPIO_Init(GPIO6_GPIO_Port, &GPIO_ChgMode);
+
+
+//			HAL_GPIO_WritePin(GPIO1_GPIO_Port, GPIO1_Pin, GPIO_PIN_RESET); // GPIO1
+//			HAL_GPIO_WritePin(GPIO2_GPIO_Port, GPIO2_Pin, GPIO_PIN_RESET); // GPIO2
+//			HAL_GPIO_WritePin(GPIO3_GPIO_Port, GPIO3_Pin, GPIO_PIN_RESET); // GPIO3
+//			HAL_GPIO_WritePin(GPIO4_GPIO_Port, GPIO4_Pin, GPIO_PIN_RESET); // GPIO4
+//			HAL_GPIO_WritePin(GPIO5_GPIO_Port, GPIO5_Pin, GPIO_PIN_RESET); // GPIO5
+//			HAL_GPIO_WritePin(GPIO6_GPIO_Port, GPIO6_Pin, GPIO_PIN_RESET); // GPIO6
 
 			ADC_Read_Array_Complete = 1;
 		}
@@ -731,27 +837,26 @@ static void MX_GPIO_Init(void)
   __HAL_RCC_GPIOA_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOB, GPIO6_Pin|GPIO5_Pin|GPIO1_Pin|LED1_Pin
-                          |LED2_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOB, LED1_Pin|LED2_Pin, GPIO_PIN_RESET);
 
-  /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOA, GPIO4_Pin|GPIO3_Pin|GPIO2_Pin, GPIO_PIN_RESET);
+  /*Configure GPIO pins : GPIO6_Pin GPIO5_Pin GPIO1_Pin */
+  GPIO_InitStruct.Pin = GPIO6_Pin|GPIO5_Pin|GPIO1_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_ANALOG;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : GPIO6_Pin GPIO5_Pin GPIO1_Pin LED1_Pin
-                           LED2_Pin */
-  GPIO_InitStruct.Pin = GPIO6_Pin|GPIO5_Pin|GPIO1_Pin|LED1_Pin
-                          |LED2_Pin;
+  /*Configure GPIO pins : PA6 GPIO4_Pin GPIO3_Pin GPIO2_Pin */
+  GPIO_InitStruct.Pin = GPIO_PIN_6|GPIO4_Pin|GPIO3_Pin|GPIO2_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_ANALOG;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+
+  /*Configure GPIO pins : LED1_Pin LED2_Pin */
+  GPIO_InitStruct.Pin = LED1_Pin|LED2_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
-
-  /*Configure GPIO pins : GPIO4_Pin GPIO3_Pin GPIO2_Pin */
-  GPIO_InitStruct.Pin = GPIO4_Pin|GPIO3_Pin|GPIO2_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-  HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
 }
 

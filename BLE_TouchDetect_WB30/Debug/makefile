@@ -71,8 +71,8 @@ all: main-build
 main-build: BLE_TouchDetect_WB30.elf secondary-outputs
 
 # Tool invocations
-BLE_TouchDetect_WB30.elf: $(OBJS) $(USER_OBJS) C:\Users\Zak\Documents\Zak\ PowerON\BLE_DemoUnit\BLE_Demo_Firmware\BLE_TouchDetect_WB30\STM32WB30CEUXA_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-gcc -o "BLE_TouchDetect_WB30.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"C:\Users\Zak\Documents\Zak PowerON\BLE_DemoUnit\BLE_Demo_Firmware\BLE_TouchDetect_WB30\STM32WB30CEUXA_FLASH.ld" --specs=nosys.specs -Wl,-Map="BLE_TouchDetect_WB30.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+BLE_TouchDetect_WB30.elf: $(OBJS) $(USER_OBJS) F:\PowerON\ Work\BLE\ Touch\ Detect\ stuff\Firmware\ble_touchdetect_firmware\BLE_TouchDetect_WB30\STM32WB30CEUXA_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-gcc -o "BLE_TouchDetect_WB30.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"F:\PowerON Work\BLE Touch Detect stuff\Firmware\ble_touchdetect_firmware\BLE_TouchDetect_WB30\STM32WB30CEUXA_FLASH.ld" --specs=nosys.specs -Wl,-Map="BLE_TouchDetect_WB30.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 
