@@ -67,6 +67,7 @@ graph_state = 0
 # 1 = debug on, print statements in console
 debug_state = 0
 
+
 # Plot figure
 fig = Figure(figsize=(5.1, 5.1), dpi=100)
 ax = fig.add_subplot()
@@ -78,8 +79,7 @@ def animate(i):
         plot_graph(data_ready)
 
     except:
-        if debug_state == 1:
-            print("error animating")
+        print("error animating")
     finally:
         pass
 
@@ -90,37 +90,43 @@ def plot_graph(data_plot):
 
     data_plot2 = data_plot
 
-    # ax.clear()
-    # ax.imshow(data_plot, cmap='Purples', vmin=0, vmax=4095)
-
-    voltage = np.zeros([6, 6])
-    resistance = np.zeros([6, 6])
-
     for i in range(len(sensor_row)):
         for j in range(len(sensor_col)):
-            voltage[i, j] = data_plot[i, j] / 4095 * 3.3
-            # Resistance measurement => R1 = R2 * (Vi-Vo)/Vo
-            if data_plot[i, j] == 0:
-                data_plot[i, j] = 1     # This is for ensuring that it does not divide by 0
+            if data_plot[i, j] < 1000:
+                data_plot[i, j] = 0
 
-            resistance[i, j] = round(511 * ((4095 - data_plot[i, j]) / data_plot[i, j]), 1)
-            voltage[i, j] = round(voltage[i, j], 2)
-            # if resistance[i, j] > 1000:
-            #     voltage[i, j] = 1
-            # else:
-            #     voltage[i, j] = 0
+    ax.clear()
+    # ax.imshow(data_plot, cmap='Purples', vmin=0, vmax=4095)
+    ax.imshow(data_plot, cmap='Purples', vmin=0, vmax=2500)
 
-    ax.clear()  # clear the plot first
-    if graph_state == 0:
-        # ax.imshow(voltage, cmap='Purples', vmin=0, vmax=255)
-        ax.imshow(voltage, cmap='Purples_r', vmin=2.5, vmax=3.3)
+    # voltage = np.zeros([6, 6])
+    # resistance = np.zeros([6, 6])
+    #
+    # for i in range(len(sensor_row)):
+    #     for j in range(len(sensor_col)):
+    #         voltage[i, j] = data_plot[i, j] / 4095 * 3.3
+    #         # Resistance measurement => R1 = R2 * (Vi-Vo)/Vo
+    #         if data_plot[i, j] == 0:
+    #             data_plot[i, j] = 1
+    #
+    #         resistance[i, j] = round(511 * ((4095 - data_plot[i, j]) / data_plot[i, j]), 1)
+    #         voltage[i, j] = round(voltage[i, j], 2)
+    #         # if resistance[i, j] > 1000:
+    #         #     voltage[i, j] = 1
+    #         # else:
+    #         #     voltage[i, j] = 0
 
-    elif graph_state == 1:
-        ax.imshow(resistance, cmap='Purples_r', vmin=0, vmax=7000)
-
-    elif graph_state == 2:
-        data_plot = data_plot
-        ax.imshow(data_plot, cmap='Purples_r', vmin=0, vmax=2000)
+    # ax.clear()  # clear the plot first
+    # if graph_state == 0:
+    #     # ax.imshow(voltage, cmap='Purples', vmin=0, vmax=255)
+    #     ax.imshow(voltage, cmap='Purples_r', vmin=2.5, vmax=3.3)
+    #
+    # elif graph_state == 1:
+    #     ax.imshow(resistance, cmap='Purples_r', vmin=0, vmax=7000)
+    #
+    # elif graph_state == 2:
+    #     data_plot = data_plot
+    #     ax.imshow(data_plot, cmap='Purples_r', vmin=190, vmax=255)
 
     # We want to show all ticks...
     ax.set_xticks(np.arange(len(sensor_col)))
@@ -129,31 +135,31 @@ def plot_graph(data_plot):
     ax.set_xticklabels(sensor_col)
     ax.set_yticklabels(sensor_row)
 
-    # Loop over data dimensions and create text annotations.
-    for i in range(len(sensor_row)):
-        for j in range(len(sensor_col)):
-            # ax.text(j, i, data_plot[i, j], ha="center", va="center", color="black")
-            if graph_state == 0:
-                if voltage[i, j] < 2.8:
-                    ax.text(j, i, voltage[i, j], ha="center", va="center", color="w")
-                else:
-                    ax.text(j, i, voltage[i, j], ha="center", va="center", color="black")
-            elif graph_state == 1:
-                if resistance[i, j] < 2000:
-                    ax.text(j, i, "{:.0f}".format(resistance[i, j]), ha="center", va="center", color="w")
-                else:
-                    ax.text(j, i, "{:.0f}".format(resistance[i, j]), ha="center", va="center", color="black")
-            elif graph_state == 2:
-                if data_plot[i, j] < 220:
-                    ax.text(j, i, data_plot[i, j], ha="center", va="center", color="w")
-                else:
-                    ax.text(j, i, data_plot[i, j], ha="center", va="center", color="black")
+    # # Loop over data dimensions and create text annotations.
+    # for i in range(len(sensor_row)):
+    #     for j in range(len(sensor_col)):
+    #         # ax.text(j, i, data_plot[i, j], ha="center", va="center", color="black")
+    #         if graph_state == 0:
+    #             if voltage[i, j] < 2.8:
+    #                 ax.text(j, i, voltage[i, j], ha="center", va="center", color="w")
+    #             else:
+    #                 ax.text(j, i, voltage[i, j], ha="center", va="center", color="black")
+    #         elif graph_state == 1:
+    #             if resistance[i, j] < 2000:
+    #                 ax.text(j, i, "{:.0f}".format(resistance[i, j]), ha="center", va="center", color="w")
+    #             else:
+    #                 ax.text(j, i, "{:.0f}".format(resistance[i, j]), ha="center", va="center", color="black")
+    #         elif graph_state == 2:
+    #             if data_plot[i, j] < 220:
+    #                 ax.text(j, i, data_plot[i, j], ha="center", va="center", color="w")
+    #             else:
+    #                 ax.text(j, i, data_plot[i, j], ha="center", va="center", color="black")
 
 
 root = tk.Tk()
 root.title("PowerON BLE Sensor GUI")
 root.iconphoto(False, tk.PhotoImage(file='Element 6@4x.png'))
-root.geometry("800x600")
+root.geometry("805x510")
 # The total grid size is 10 rows and 4 columns for GUI
 
 canvas = tk.Canvas(root, width=800, height=80)
@@ -202,6 +208,7 @@ async def async_ble_connect():
         if not status1:
             if debug_state == 1:
                 print("Trying to reconnect")
+
             client = BleakClient(BLE_address, timeout=5.0)
             try:
                 await client.connect()
@@ -267,8 +274,8 @@ def thread_connect():
         BLE_Receive_Data_btn['state'] = tk.NORMAL  # enable the receive data button
         BLE_Disconnect_btn["state"] = tk.NORMAL  # enable disconnect button
 
-        Data_Log_Yes_btn['state'] = tk.NORMAL
-        Data_Log_No_btn['state'] = tk.DISABLED
+        # Data_Log_Yes_btn['state'] = tk.NORMAL
+        # Data_Log_No_btn['state'] = tk.DISABLED
         # Log_data_var.set(0)
 
         BLE_Status_text.set("Connected")  # Change label to connected
@@ -282,8 +289,8 @@ def thread_connect():
         BLE_Receive_Data_btn['state'] = tk.DISABLED
         BLE_Disconnect_btn["state"] = tk.DISABLED
         # Log_data_var.set(0)
-        Data_Log_Yes_btn['state'] = tk.DISABLED
-        Data_Log_No_btn['state'] = tk.DISABLED
+        # Data_Log_Yes_btn['state'] = tk.DISABLED
+        # Data_Log_No_btn['state'] = tk.DISABLED
         BLE_Status_text.set("BLE device not found")
         system_state = 0
         if debug_state == 1:
@@ -296,8 +303,8 @@ def ble_connect_cmd():
     BLE_Connect_btn['state'] = tk.DISABLED  # disable the connect button first
     BLE_Receive_Data_btn['state'] = tk.DISABLED  # disable the receive data button
     BLE_Disconnect_btn["state"] = tk.DISABLED  # disable disconnect button
-    Data_Log_Yes_btn['state'] = tk.DISABLED   # disable data log yes button
-    Data_Log_No_btn['state'] = tk.DISABLED  # disable data log yes button
+    # Data_Log_Yes_btn['state'] = tk.DISABLED   # disable data log yes button
+    # Data_Log_No_btn['state'] = tk.DISABLED  # disable data log yes button
 
     thread_connecting = threading.Thread(target=thread_connect)
     thread_connecting.start()
@@ -383,8 +390,8 @@ def ble_receive_data_cmd():
     BLE_Receive_Data_btn['state'] = tk.DISABLED  # disable receive data button
     BLE_Stop_Data_btn['state'] = tk.NORMAL  # enable stop data button
     BLE_Disconnect_btn['state'] = tk.DISABLED  # disable disconnect button
-    Data_Log_Yes_btn['state'] = tk.DISABLED
-    Data_Log_No_btn['state'] = tk.DISABLED
+    # Data_Log_Yes_btn['state'] = tk.DISABLED
+    # Data_Log_No_btn['state'] = tk.DISABLED
 
     BLE_Status_text.set("Receiving data")
 
@@ -392,8 +399,8 @@ def ble_receive_data_cmd():
     system_state = 2
     if debug_state == 1:
         print(f'System_state = {system_state}')
-        print('start threading function')
 
+        print('start threading function')
     global thread1
     thread1 = threading.Thread(target=thread_receive_data)
     thread1.start()
@@ -443,13 +450,13 @@ def stop_ble_cmd():
     BLE_Status_text.set("Ready")
     BLE_Receive_Data_btn['state'] = tk.NORMAL  # enable receive data button
     BLE_Disconnect_btn['state'] = tk.NORMAL  # enable disconnect button
-    
-    if log_data_state == 1:
-        Data_Log_Yes_btn['state'] = tk.DISABLED
-        Data_Log_No_btn['state'] = tk.NORMAL
-    else:
-        Data_Log_Yes_btn['state'] = tk.NORMAL
-        Data_Log_No_btn['state'] = tk.DISABLED
+
+    # if log_data_state == 1:
+    #     Data_Log_Yes_btn['state'] = tk.DISABLED
+    #     Data_Log_No_btn['state'] = tk.NORMAL
+    # else:
+    #     Data_Log_Yes_btn['state'] = tk.NORMAL
+    #     Data_Log_No_btn['state'] = tk.DISABLED
 
     global system_state
     system_state = 1
@@ -489,8 +496,8 @@ def thread_disconnection():
             BLE_Stop_Data_btn['state'] = tk.DISABLED  # disable stop data button
             BLE_Connect_btn['state'] = tk.NORMAL  # enable ble connect button
             BLE_Disconnect_btn['state'] = tk.DISABLED  # disable ble disconnect button
-            Data_Log_Yes_btn['state'] = tk.DISABLED
-            Data_Log_No_btn['state'] = tk.DISABLED
+            # Data_Log_Yes_btn['state'] = tk.DISABLED
+            # Data_Log_No_btn['state'] = tk.DISABLED
 
         global system_state
         system_state = 0
@@ -515,8 +522,8 @@ def ble_disconnect_cmd():
         BLE_Stop_Data_btn['state'] = tk.DISABLED  # disable stop data button
         BLE_Connect_btn['state'] = tk.DISABLED  # enable ble connect button
         BLE_Disconnect_btn['state'] = tk.DISABLED  # disable ble disconnect button
-        Data_Log_Yes_btn['state'] = tk.DISABLED
-        Data_Log_No_btn['state'] = tk.DISABLED
+        # Data_Log_Yes_btn['state'] = tk.DISABLED
+        # Data_Log_No_btn['state'] = tk.DISABLED
 
 
 # BLE disconnect data
@@ -526,76 +533,68 @@ BLE_Disconnect_btn = tk.Button(BLE_Header, width=10, textvariable=BLE_Disconnect
 BLE_Disconnect_text.set("Disconnect")
 BLE_Disconnect_btn.grid(column=0, row=2, padx=10, pady=10)
 
-# Header - Data logging [frame]
-Data_Log_Header = tk.LabelFrame(root, text="Data Logging", width=250, height=150, padx=10, pady=10)
-Data_Log_Header.grid(column=0, row=5, padx=10, pady=10)
-Data_Log_Header.grid_propagate(0)  # stop frame from resizing
-
-# Setting some rows and columns structure so that the buttons and text are centered in frame
-Data_Log_Header.rowconfigure(0, weight=1)
-Data_Log_Header.columnconfigure(0, weight=1)
-Data_Log_Header.rowconfigure(3, weight=1)
-Data_Log_Header.columnconfigure(3, weight=1)
-
-# Data logger file name
-Data_Log_filename = tk.Label(Data_Log_Header, text="Data logging:")
-Data_Log_filename.grid(column=1, row=1)
-
-
-# def data_logger_cmd():
+# # Header - Data logging [frame]
+# Data_Log_Header = tk.LabelFrame(root, text="Data Logging", width=250, height=150, padx=10, pady=10)
+# Data_Log_Header.grid(column=0, row=5, padx=10, pady=10)
+# Data_Log_Header.grid_propagate(0)  # stop frame from resizing
+#
+# # Data logger file name
+# Data_Log_filename = tk.Label(Data_Log_Header, text="Data logging:")
+# Data_Log_filename.grid(column=0, row=0)
+#
+#
+# # def data_logger_cmd():
+# #     global log_data_state
+# #     log_data_state = Log_data_var.get()
+# #     print(f'Radio button value is {Log_data_var.get()}')
+# #
+# #     if Log_data_var.get() == 0:
+# #         # close file
+# #         global log_data_file_opened
+# #         global data_logger_file
+# #
+# #         if log_data_file_opened:
+# #             data_logger_file.close()
+# #             log_data_file_opened = False
+#
+#
+# def data_logger_yes_cmd():
 #     global log_data_state
-#     log_data_state = Log_data_var.get()
-#     if debug_state == 1:
-#         print(f'Radio button value is {Log_data_var.get()}')
 #
-#     if Log_data_var.get() == 0:
-#         # close file
-#         global log_data_file_opened
-#         global data_logger_file
+#     log_data_state = 1
+#     Data_Log_Yes_btn['state'] = tk.DISABLED
+#     Data_Log_No_btn['state'] = tk.NORMAL
 #
-#         if log_data_file_opened:
-#             data_logger_file.close()
-#             log_data_file_opened = False
-
-
-def data_logger_yes_cmd():
-    global log_data_state
-
-    log_data_state = 1
-    Data_Log_Yes_btn['state'] = tk.DISABLED
-    Data_Log_No_btn['state'] = tk.NORMAL
-
-
-def data_logger_no_cmd():
-    global log_data_state
-    global log_data_file_opened
-    global data_logger_file
-
-    log_data_state = 0
-
-    Data_Log_Yes_btn['state'] = tk.NORMAL
-    Data_Log_No_btn['state'] = tk.DISABLED
-
-    if log_data_file_opened:
-        data_logger_file.close()
-        log_data_file_opened = False
-
-
-# Data logger start
+#
+# def data_logger_no_cmd():
+#     global log_data_state
+#     global log_data_file_opened
+#     global data_logger_file
+#
+#     log_data_state = 0
+#
+#     Data_Log_Yes_btn['state'] = tk.NORMAL
+#     Data_Log_No_btn['state'] = tk.DISABLED
+#
+#     if log_data_file_opened:
+#         data_logger_file.close()
+#         log_data_file_opened = False
+#
+#
+# # Data logger start
 # Log_data_var = tk.IntVar()
-
-Data_Log_Yes_text = tk.StringVar()
-Data_Log_Yes_btn = tk.Button(Data_Log_Header, width=10, textvariable=Data_Log_Yes_text, state=tk.DISABLED,
-                             command=data_logger_yes_cmd)
-Data_Log_Yes_text.set("Yes")
-Data_Log_Yes_btn.grid(column=1, row=2, padx=10, pady=10)
-
-Data_Log_No_text = tk.StringVar()
-Data_Log_No_btn = tk.Button(Data_Log_Header, width=10, textvariable=Data_Log_No_text, state=tk.DISABLED,
-                            command=data_logger_no_cmd)
-Data_Log_No_text.set("No")
-Data_Log_No_btn.grid(column=1, row=3, padx=10, pady=10)
-
+#
+# Data_Log_Yes_text = tk.StringVar()
+# Data_Log_Yes_btn = tk.Button(Data_Log_Header, width=10, textvariable=Data_Log_Yes_text, state=tk.DISABLED,
+#                              command=data_logger_yes_cmd)
+# Data_Log_Yes_text.set("Yes")
+# Data_Log_Yes_btn.grid(column=0, row=1, padx=10, pady=10)
+#
+# Data_Log_No_text = tk.StringVar()
+# Data_Log_No_btn = tk.Button(Data_Log_Header, width=10, textvariable=Data_Log_No_text, state=tk.DISABLED,
+#                             command=data_logger_no_cmd)
+# Data_Log_No_text.set("No")
+# Data_Log_No_btn.grid(column=0, row=2, padx=10, pady=10)
 
 # Data_Log_Receive_Data_text = tk.StringVar()
 # Data_Log_Receive_Data_btn = tk.Radiobutton(root, textvariable=Data_Log_Receive_Data_text,
@@ -645,63 +644,63 @@ def exit_btn_command():
 Exit_text = tk.StringVar()
 Exit_btn = tk.Button(root, width=10, textvariable=Exit_text, command=exit_btn_command)
 Exit_text.set("Exit")
-Exit_btn.grid(column=0, row=9)
+Exit_btn.grid(column=0, row=8)
 
-# Data display
-Data_Display_Header = tk.LabelFrame(root, text="Data Display", padx=10, pady=10)
-Data_Display_Header.grid(column=1, row=9, padx=15, pady=0)
-
-
-def graph_v_cmd():
-    Graph_Voltage_btn['state'] = tk.DISABLED
-    Graph_Res_btn['state'] = tk.NORMAL
-    Graph_Raw_btn['state'] = tk.NORMAL
-
-    global graph_state
-    graph_state = 0
-
-
-# Graph voltage measurement display
-Graph_Voltage_text = tk.StringVar()
-Graph_Voltage_btn = tk.Button(Data_Display_Header, width=10, textvariable=Graph_Voltage_text,
-                              command=graph_v_cmd, state=tk.DISABLED)
-Graph_Voltage_text.set("Voltage")
-Graph_Voltage_btn.grid(column=0, row=0, padx=40)
-
-
-def graph_r_cmd():
-    Graph_Voltage_btn['state'] = tk.NORMAL
-    Graph_Res_btn['state'] = tk.DISABLED
-    Graph_Raw_btn['state'] = tk.NORMAL
-
-    global graph_state
-    graph_state = 1
-
-
-# Graph resistance measurement display
-Graph_Res_text = tk.StringVar()
-Graph_Res_btn = tk.Button(Data_Display_Header, width=10, textvariable=Graph_Res_text, command=graph_r_cmd)
-Graph_Res_text.set("Resistance")
-Graph_Res_btn.grid(column=1, row=0, padx=40)
-
-
-def graph_f_cmd():
-    Graph_Voltage_btn['state'] = tk.NORMAL
-    Graph_Res_btn['state'] = tk.NORMAL
-    Graph_Raw_btn['state'] = tk.DISABLED
-
-    global graph_state
-    graph_state = 2
-
-
-# Graph resistance measurement display
-Graph_Raw_text = tk.StringVar()
-Graph_Raw_btn = tk.Button(Data_Display_Header, width=10, textvariable=Graph_Raw_text, command=graph_f_cmd)
-Graph_Raw_text.set("Raw Data")
-Graph_Raw_btn.grid(column=2, row=0, padx=40)
-
-# canvas = tk.Canvas(root, width=800, height=10)
-# canvas.grid(columnspan=4, column=0, row=10)
+# # Data display
+# Data_Display_Header = tk.LabelFrame(root, text="Data Display", padx=20, pady=10)
+# Data_Display_Header.grid(column=1, row=9, padx=10, pady=10)
+#
+#
+# def graph_v_cmd():
+#     Graph_Voltage_btn['state'] = tk.DISABLED
+#     Graph_Res_btn['state'] = tk.NORMAL
+#     Graph_Force_btn['state'] = tk.NORMAL
+#
+#     global graph_state
+#     graph_state = 0
+#
+#
+# # Graph voltage measurement display
+# Graph_Voltage_text = tk.StringVar()
+# Graph_Voltage_btn = tk.Button(Data_Display_Header, textvariable=Graph_Voltage_text,
+#                               command=graph_v_cmd, state=tk.DISABLED)
+# Graph_Voltage_text.set("Voltage")
+# Graph_Voltage_btn.grid(column=0, row=0, padx=50)
+#
+#
+# def graph_r_cmd():
+#     Graph_Voltage_btn['state'] = tk.NORMAL
+#     Graph_Res_btn['state'] = tk.DISABLED
+#     Graph_Force_btn['state'] = tk.NORMAL
+#
+#     global graph_state
+#     graph_state = 1
+#
+#
+# # Graph resistance measurement display
+# Graph_Res_text = tk.StringVar()
+# Graph_Res_btn = tk.Button(Data_Display_Header, textvariable=Graph_Res_text, command=graph_r_cmd)
+# Graph_Res_text.set("Resistance")
+# Graph_Res_btn.grid(column=1, row=0, padx=50)
+#
+#
+# def graph_f_cmd():
+#     Graph_Voltage_btn['state'] = tk.NORMAL
+#     Graph_Res_btn['state'] = tk.NORMAL
+#     Graph_Force_btn['state'] = tk.DISABLED
+#
+#     global graph_state
+#     graph_state = 2
+#
+#
+# # Graph resistance measurement display
+# Graph_Force_text = tk.StringVar()
+# Graph_Force_btn = tk.Button(Data_Display_Header, textvariable=Graph_Force_text, command=graph_f_cmd)
+# Graph_Force_text.set("Force")
+# Graph_Force_btn.grid(column=2, row=0, padx=50)
+#
+# # canvas = tk.Canvas(root, width=800, height=10)
+# # canvas.grid(columnspan=4, column=0, row=10)
 
 
 def plot_initial_graph():
@@ -712,7 +711,7 @@ def plot_initial_graph():
     # Move the figure to the front
     canvas_fig = FigureCanvasTkAgg(fig, master=root)
     canvas_fig.draw()
-    canvas_fig.get_tk_widget().grid(columnspan=3, rowspan=8, column=1, row=0)
+    canvas_fig.get_tk_widget().grid(columnspan=3, rowspan=9, column=1, row=0)
 
 
 plot_initial_graph()
