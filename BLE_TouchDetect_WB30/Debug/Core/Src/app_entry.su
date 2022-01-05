@@ -1,0 +1,15 @@
+stm32wbxx_ll_pwr.h:1664:22:LL_C2_PWR_SetPowerMode	16	static
+stm32wbxx_ll_rcc.h:2331:22:LL_RCC_SetClkAfterWakeFromStop	16	static
+app_entry.c:78:6:APPE_Init	8	static
+app_entry.c:128:13:SystemPower_Config	8	static
+app_entry.c:150:13:appe_Tl_Init	40	static
+app_entry.c:175:13:APPE_SysStatusNot	16	static
+app_entry.c:190:13:APPE_SysUserEvtRx	16	static
+app_entry.c:202:13:Led_Init	4	static
+app_entry.c:219:13:Button_Init	4	static
+app_entry.c:241:6:UTIL_SEQ_Idle	4	static
+app_entry.c:256:6:UTIL_SEQ_EvtIdle	16	static
+app_entry.c:261:6:shci_notify_asynch_evt	16	static
+app_entry.c:267:6:shci_cmd_resp_release	16	static
+app_entry.c:273:6:shci_cmd_resp_wait	16	static
+app_entry.c:280:6:HAL_GPIO_EXTI_Callback	16	static
