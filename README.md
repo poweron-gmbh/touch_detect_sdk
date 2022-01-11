@@ -13,17 +13,21 @@
 
 ## About
 
-This repo contains the Graphical User Interface (GUI) for managing data from BLE Can TouchDetect.
+This repo contains the Graphical User Interface (GUI) for managing data from BLE TouchDetect.
 
 ## Prerequisites
 
 - Install Python 3.8.9 (this project won't work on newer versions).
   - Download **Windows installer** from [here](https://www.python.org/downloads/release/python-389/).
-  - Add python to PATH: this allows to execute python from **Powershell**. Follow [these steps](https://www.educative.io/edpresso/how-to-add-python-to-path-variable-in-windows).
-
-- Install virtualenv. This tool allows to isolate and run the python scripts. See [why we need to use virtual environments?](https://realpython.com/python-virtual-environments-a-primer/#why-the-need-for-virtual-environments).
+  - Add python to PATH: this allows to execute python from **Powershell**. Follow [these steps](https://datatofish.com/add-python-to-windows-path/).
 
 - [Install pip](https://phoenixnap.com/kb/install-pip-windows).
+
+- Install virtualenv. This tool allows to isolate and run the python scripts. Just run:
+
+```bash
+pip install virtualenv
+```
 
 ## Running the GUI's from console
 
