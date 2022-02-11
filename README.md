@@ -15,20 +15,21 @@
 
 ## About
 
-This repo contains the firmware for programming the BLE TouchDetect. It also
-contains the PC software for connecting to the device.
+This repo contains the PC software for connecting to the device.
 
 ## Repo structure
 
 You can find here a brief description of how the project is organized:
 
-- standard: contains the main PC programm.
+- [standard](Standard): contains the main PC programm.
 
-- demo_version: similar to standard version, but does not include numeric information about ADC.
+- [demo_version](demo_version): similar to standard version, but does not include numeric information about ADC.
 
-- interfacing_uoa_ble_device:
+- [interfacing_uoa_ble_device](interfacing_uoa_ble_device): 
 
-- resources: useful documents related to the project.
+- [resources](resources): useful documents related to the project.
+
+- [ble_touchdetect_sdk](/ble_touchdetect_sdk/README.md): SDK library for interfacing BLE TouchDetect.
 
 ## PC software
 
