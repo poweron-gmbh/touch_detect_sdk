@@ -77,7 +77,7 @@ pip install virtualenv
 
 ### Running the GUI's from pycharm
 
-- Follow the [Getting started with BLE Sensor Python GUI](Getting%20started%20with%20BLE%20Sensor%20Python%20GUI.docx) document.
+- Follow the [Getting started with BLE Sensor Python GUI](/resources/Getting%20started%20with%20BLE%20Sensor%20Python%20GUI.docx) document.
 
 
 ### Problems running the GUI's
