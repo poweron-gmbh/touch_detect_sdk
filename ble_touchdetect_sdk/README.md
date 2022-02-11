@@ -10,6 +10,7 @@
   - [Run the demo](#run-the-demo)
   - [Test the library](#test-the-library)
   - [Use the SDK in your project](#use-the-sdk-in-your-project)
+  - [SDK documentation](#sdk-documentation)
 
 ## About
 
@@ -130,3 +131,7 @@ from ble_touchdetect_sdk import BleTouchSdk
 ```
 
 - Start using the SDK.
+
+## SDK documentation
+
+For detailed information about the SDK, please check the [SDK documentation](/ble_touchdetect_sdk/docs/_build/html/index.html).
