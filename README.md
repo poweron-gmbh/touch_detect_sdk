@@ -9,6 +9,7 @@
   - [PC software](#pc-software)
     - [Prerequisites](#prerequisites)
     - [Running the GUI's from console](#running-the-guis-from-console)
+    - [Building executibles](#building-executible-program)
     - [Running the GUI's from pycharm](#running-the-guis-from-pycharm)
     - [Problems running the GUI's](#problems-running-the-guis)
     - [Known issues](#known-issues)
@@ -74,6 +75,36 @@ pip install virtualenv
 ```bash
   python.exe .\main.py 
 ```
+
+### Building executible program 
+
+- Open Powershell inside the folder of the GUI you want to build.
+  - To do so, open File explorer and navigate inside the folder of the GUI (For example, place inside `Standard` folder).
+  - Press `Shift + Right click`. You should see some option like `Open PowerShell window here`.
+
+- Create a new environment and start it:
+
+```bash
+  # Create the environment
+  python -m virtualenv myenv
+
+  # Start the environment
+  .\myvenv\Scripts\activate
+```
+
+- Install all the dependencies required for running the GUI:
+
+```bash
+  pip install -r requirements.txt
+```
+
+- Run the app:
+
+```bash
+  python.exe .\build_exe.py 
+```
+
+- The executible file will be generated and store in the dist/ To run the executible, double click it.
 
 ### Running the GUI's from pycharm
 

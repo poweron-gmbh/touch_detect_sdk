@@ -9,6 +9,8 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.figure import Figure
 import matplotlib.animation as animation
 from bleak import BleakClient, BleakScanner
+from genericpath import exists
+from os import path
 import asyncio
 import threading
 import csv
@@ -139,9 +141,17 @@ def plot_graph(data_plot):
                     ax.text(j, i, data_plot[i, j], ha="center", va="center", color="black")
 
 
+# When running using the Python interpreter included files are stored in ..\resources\
+# When running from the executible in windows they are stored in in resouces\
+if exists(path.relpath(path.join('..', 'resources'))):
+    incl_path = path.join(path.dirname(__file__), '..', 'resources')
+else:
+    incl_path = path.join(path.dirname(__file__), 'resources')
+
 root = tk.Tk()
 root.title("PowerON BLE Sensor GUI")
-root.iconphoto(False, tk.PhotoImage(file='Element 6@4x.png'))
+icon_file = path.abspath(path.join(incl_path, 'Element_64x.png'))
+root.iconphoto(False, tk.PhotoImage(file=icon_file))
 root.geometry("800x650")
 # The total grid size is 10 rows and 4 columns for GUI
 
@@ -149,7 +159,8 @@ canvas = tk.Canvas(root, width=800, height=80)
 canvas.grid(column=0, row=0, columnspan=4)
 
 # logo
-logo = Image.open('Logo_PWN_TM3.png')
+logo_file = path.abspath(path.join(incl_path, 'Logo_PWN_TM3.png'))
+logo = Image.open(logo_file)
 logo_width, logo_height = logo.size
 ratio = 0.7
 logo = logo.resize((int(logo_width * ratio), int(logo_height * ratio)))
