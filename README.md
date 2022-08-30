@@ -42,10 +42,10 @@ You can find here a brief description of how the project is organized:
 
 - [Install pip](https://phoenixnap.com/kb/install-pip-windows).
 
-- Install virtualenv. This tool allows to isolate and run the python scripts. Just run:
+- Install pipenv. This tool allows to isolate and run the python scripts. Just run:
 
 ```bash
-pip install virtualenv
+pip install pipenv
 ```
 
 ### Running the GUI's from console
@@ -54,26 +54,29 @@ pip install virtualenv
   - To do so, open File explorer and navigate inside the folder of the GUI (For example, place inside `Standard` folder).
   - Press `Shift + Right click`. You should see some option like `Open PowerShell window here`.
 
-- Create a new environment and start it:
+- Create a new environment and install all the dependencies required for running the GUI:
 
 ```bash
   # Create the environment
-  python -m virtualenv myenv
-
-  # Start the environment
-  .\myvenv\Scripts\activate
+  py -m pipenv install
 ```
 
-- Install all the dependencies required for running the GUI:
+- Start pipenv
 
 ```bash
-  pip install -r requirements.txt
+py -m pipenv shell
 ```
 
 - Run the app:
 
 ```bash
-  python.exe .\main.py 
+  py main.py 
+```
+
+- To exit the `pipenv` type
+
+```bash
+  exit
 ```
 
 ### Building executible program 
@@ -82,29 +85,32 @@ pip install virtualenv
   - To do so, open File explorer and navigate inside the folder of the GUI (For example, place inside `Standard` folder).
   - Press `Shift + Right click`. You should see some option like `Open PowerShell window here`.
 
-- Create a new environment and start it:
+- Create a new environment and install all the dependencies required for running the GUI:
 
 ```bash
   # Create the environment
-  python -m virtualenv myenv
-
-  # Start the environment
-  .\myvenv\Scripts\activate
+  py -m pipenv install
 ```
 
-- Install all the dependencies required for running the GUI:
+- Start pipenv
 
 ```bash
-  pip install -r requirements.txt
+py -m pipenv shell
 ```
 
 - Run the app:
 
 ```bash
-  python.exe .\build_exe.py 
+  py build_exe.py
 ```
 
 - The executible file will be generated and store in the dist/ To run the executible, double click it.
+
+To exit the `pipenv` type
+
+```bash
+  exit
+```
 
 ### Running the GUI's from pycharm
 
