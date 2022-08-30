@@ -24,30 +24,31 @@ This is the SDK for connecting to BLE TouchDetect sensor.
 
 - [Install pip](https://phoenixnap.com/kb/install-pip-windows).
 
-- Install virtualenv. This tool allows to isolate and run the python scripts. To do so, just run:
+- Install pipenv. This tool allows to isolate and run the python scripts. Just run:
 
 ```bash
-pip install virtualenv
+pip install pipenv
 ```
 
 ## Setup your environment
 
-It is strongly suggested the use of virtual environments. To do so:
-
-- Create a new environment and start it:
+The use of pip environments / virtual environments is strongly recommended. To do so:
 
 ```bash
   # Create the environment
-  python -m virtualenv myenv
-
-  # Start the environment
-  .\myvenv\Scripts\activate
+  py -m pipenv install
 ```
 
-- Install all the dependencies required for running the SDK:
+- Start pipenv
 
 ```bash
-  pip install -r requirements.txt
+py -m pipenv shell
+```
+
+- To exit the `pipenv` type
+
+```bash
+  exit
 ```
 
 ## Run the demo
@@ -107,7 +108,7 @@ There are also tests implemented for testing the correct behavior of the library
 pytest .\test\
 ```
 
-- To run a speicif test, run:
+- To run a specific test, run:
 
 ```bash
 pytest .\test\test_ble_touch_sdk.py
