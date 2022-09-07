@@ -1,18 +1,28 @@
 # README - CAN Touch SDK
 
-old md input include test
-
 ## Table of Contents
+
+
+* README - CAN TOUCH SDK
+
+    
+        * Prerequisites
+
+
+        * Run the Demo
+
+
+        * Use the library
 
 ## About
 
 This is the SDK for connecting to CAN TouchDetect sensor over UART USB Adapter.
 
-### Prerequisites
+## Prerequisites
 
 The following requirements must be met in order to run the SDK.
 
-#### Python 3.8.9
+### Python 3.8.9
 
 Install Python 3.9
 
@@ -25,7 +35,7 @@ Install Python 3.9
 
 * [Install pip](https://phoenixnap.com/kb/install-pip-windows).
 
-#### Virtualenv (optional)
+### Virtualenv (optional)
 
 It is suggested to isolate the execution of python scripts. To do so:
 
@@ -54,7 +64,7 @@ python -m virtualenv myenv
 pip install -r requirements.txt
 ```
 
-### Run the demo
+## Run the demo
 
 There is simple demo inside the **sample** folder. This helps you to understand how this library works. To run it:
 
@@ -116,7 +126,7 @@ data: [ 000, 1355, 2365, 3219]
 
 * Finally it will disconnect from CAN device.
 
-### Use the library
+## Use the library
 
 To use this library:
 
