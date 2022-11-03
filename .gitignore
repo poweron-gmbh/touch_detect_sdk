@@ -1,3 +1,12 @@
-# Folders
+# Ignore folders
+__pycache__
+.idea
+.pytest_cache
+.vscode
 Debug
-.vs
+
+**/dist
+**/build
+
+#Ignore files
+*.spec

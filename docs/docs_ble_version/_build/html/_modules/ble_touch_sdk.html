@@ -1,0 +1,422 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ble_touch_sdk &#8212; BLE Touch Detect SDK 0.1 documentation</title>
+    
+  <link href="../_static/css/theme.css" rel="stylesheet">
+  <link href="../_static/css/index.ff1ffe594081f20da1ef19478df9384b.css" rel="stylesheet">
+
+    
+  <link rel="stylesheet"
+    href="../_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    
+      
+
+    
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/blank.css" />
+    
+  <link rel="preload" as="script" href="../_static/js/index.be7d3bbb2ef33a8344ce.js">
+
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="None">
+    
+
+    <!-- Google Analytics -->
+    
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="80">
+    
+    <div class="container-fluid" id="banner"></div>
+
+    
+    <nav class="navbar navbar-light navbar-expand-lg bg-light fixed-top bd-navbar" id="navbar-main"><div class="container-xl">
+
+  <div id="navbar-start">
+    
+    
+<a class="navbar-brand" href="../index.html">
+<p class="title">BLE Touch Detect SDK</p>
+</a>
+
+    
+  </div>
+
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-collapsible" aria-controls="navbar-collapsible" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  
+  <div id="navbar-collapsible" class="col-lg-9 collapse navbar-collapse">
+    <div id="navbar-center" class="mr-auto">
+      
+      <div class="navbar-center-item">
+        <ul id="navbar-main-elements" class="navbar-nav">
+    <li class="toctree-l1 nav-item">
+ <a class="reference internal nav-link" href="../prerequisites.html">
+  Prerequisites
+ </a>
+</li>
+
+<li class="toctree-l1 nav-item">
+ <a class="reference internal nav-link" href="../run_the_demo.html">
+  Run the demo
+ </a>
+</li>
+
+<li class="toctree-l1 nav-item">
+ <a class="reference internal nav-link" href="../test_library.html">
+  Test the library
+ </a>
+</li>
+
+<li class="toctree-l1 nav-item">
+ <a class="reference internal nav-link" href="../use_library.html">
+  Use the library
+ </a>
+</li>
+
+<li class="toctree-l1 nav-item">
+ <a class="reference internal nav-link" href="../apidocs.html">
+  API Documentation
+ </a>
+</li>
+
+    
+</ul>
+      </div>
+      
+    </div>
+
+    <div id="navbar-end">
+      
+      <div class="navbar-end-item">
+        <ul id="navbar-icon-links" class="navbar-nav" aria-label="Icon Links">
+      </ul>
+      </div>
+      
+    </div>
+  </div>
+</div>
+    </nav>
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+            
+            <!-- Only show if we have sidebars configured, else just a small margin  -->
+            <div class="col-12 col-md-3 bd-sidebar"><form class="bd-search d-flex align-items-center" action="../search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search the docs ..." aria-label="Search the docs ..." autocomplete="off" >
+</form><nav class="bd-links" id="bd-docs-nav" aria-label="Main navigation">
+  <div class="bd-toc-item active">
+    
+  </div>
+</nav>
+            </div>
+            
+          
+
+          
+          <div class="d-none d-xl-block col-xl-2 bd-toc">
+            
+          </div>
+          
+
+          
+          
+            
+          
+          <main class="col-12 col-md-9 col-xl-7 py-md-5 pl-md-5 pr-md-4 bd-content" role="main">
+              
+              <div>
+                
+  <h1>Source code for ble_touch_sdk</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python3</span>
+
+<span class="kn">import</span> <span class="nn">asyncio</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+
+<span class="kn">from</span> <span class="nn">bleak</span> <span class="kn">import</span> <span class="n">BleakClient</span><span class="p">,</span> <span class="n">BleakScanner</span>
+<span class="kn">from</span> <span class="nn">threading</span> <span class="kn">import</span> <span class="n">Thread</span><span class="p">,</span> <span class="n">Event</span><span class="p">,</span> <span class="n">Lock</span>
+
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">))</span>  <span class="c1"># noqa</span>
+<span class="kn">from</span> <span class="nn">ble_device</span> <span class="kn">import</span> <span class="n">BleDevice</span>  <span class="c1"># noqa</span>
+
+<span class="c1"># Amount of time to wait for connection</span>
+<span class="n">WAIT_CONNECTION_TIMEOUT</span> <span class="o">=</span> <span class="mf">5.0</span>
+<span class="c1"># UUID characteristic where TouchDetect sends the data.</span>
+<span class="n">BLE_NOTIFY_UUID</span> <span class="o">=</span> <span class="s2">&quot;0000fe42-8e22-4541-9d4c-21edae82ed19&quot;</span>
+<span class="c1"># Format for logging.</span>
+<span class="n">LOGGING_FORMAT</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">%(asctime)s</span><span class="s1"> </span><span class="si">%(user)-8s</span><span class="s1"> </span><span class="si">%(message)s</span><span class="s1">&#39;</span>
+
+<span class="c1"># Amount of time to wait for discover new devices.</span>
+<span class="n">BLE_DISCOVER_TIMEOUT</span> <span class="o">=</span> <span class="mf">2.0</span>
+<span class="c1"># Amount of time to to wait for data changes in data loop.</span>
+<span class="n">BLE_UPDATE_LOOP_TIME</span> <span class="o">=</span> <span class="mf">0.010</span>
+<span class="c1"># Minimal amount of time to wait for connection.</span>
+<span class="n">BLE_CHECK_CONNECTION_SEC</span> <span class="o">=</span> <span class="mf">0.05</span>
+<span class="c1"># Size of the queue for incomming data.</span>
+<span class="n">DATA_QUEUE_SIZE</span> <span class="o">=</span> <span class="mi">1</span>
+
+<div class="viewcode-block" id="BleTouchSdk"><a class="viewcode-back" href="../apidocs.html#ble_touch_sdk.BleTouchSdk">[docs]</a><span class="k">class</span> <span class="nc">BleTouchSdk</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;This Class manages the communication with BLE devices.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">logfile</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Initialize BLE TouchDetect SDK instance</span>
+
+<span class="sd">        :param logfile: URL to the nasm installer, defaults to None</span>
+<span class="sd">        :type logfile: str, optional</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># List of devices found</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_devices_found</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="c1"># Event loop for running incomming data callback.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_loop_ble_data</span> <span class="o">=</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">new_event_loop</span><span class="p">()</span>
+        <span class="n">asyncio</span><span class="o">.</span><span class="n">set_event_loop</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_loop_ble_data</span><span class="p">)</span>
+        <span class="c1"># Queue for sharing data.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_incomming_data_queue</span> <span class="o">=</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">Queue</span><span class="p">(</span><span class="n">DATA_QUEUE_SIZE</span><span class="p">)</span>
+        <span class="c1"># Timestamp for calculating time between readings.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_timestamp_start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+        <span class="c1"># Thread for processing incomming data.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_incomming_data_thread</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="c1"># Lock for protecting _ble_client</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_data_thread_lock</span> <span class="o">=</span> <span class="n">Lock</span><span class="p">()</span>
+        <span class="c1"># Event for stopping incomming_data_thread.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_stop_notify_loop_event</span> <span class="o">=</span> <span class="n">Event</span><span class="p">()</span>
+        <span class="c1"># Status of the BLE connection</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_device_connected</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="c1"># MAC of the device that is going to be connected.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_device_mac</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="k">if</span> <span class="n">logfile</span><span class="p">:</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">basicConfig</span><span class="p">(</span>
+                <span class="n">filename</span><span class="o">=</span><span class="n">logfile</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s1">&#39;utf-8&#39;</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">basicConfig</span><span class="p">(</span><span class="n">level</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">)</span>
+
+<div class="viewcode-block" id="BleTouchSdk.search_devices"><a class="viewcode-back" href="../apidocs.html#ble_touch_sdk.BleTouchSdk.search_devices">[docs]</a>    <span class="k">def</span> <span class="nf">search_devices</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Search BLE devices nearby</span>
+
+<span class="sd">        :return: list of BLE devices</span>
+<span class="sd">        :rtype: list</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_devices_found</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+        <span class="n">asyncio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_discover</span><span class="p">())</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_devices_found</span></div>
+
+<div class="viewcode-block" id="BleTouchSdk.connect"><a class="viewcode-back" href="../apidocs.html#ble_touch_sdk.BleTouchSdk.connect">[docs]</a>    <span class="k">def</span> <span class="nf">connect</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">device_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Connect to BLE device</span>
+
+<span class="sd">        :param device_name: name of the BLE device to find</span>
+<span class="sd">        :type device_name: str</span>
+<span class="sd">        :return: true if connection was successful, False otherwise.</span>
+<span class="sd">        :rtype: boolean</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Run discover if didn&#39;t run before.</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_devices_found</span><span class="p">:</span>
+            <span class="n">asyncio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_discover</span><span class="p">())</span>
+        <span class="c1"># Get the MAC of the BLE device.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_device_mac</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_mac</span><span class="p">(</span><span class="n">device_name</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_device_mac</span><span class="p">:</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s1">&#39;Device was not found&#39;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">False</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_connected</span><span class="p">():</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s1">&#39;Already connected to a device&#39;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">False</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="c1"># Start thread for getting data from BLE device.</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_incomming_data_thread</span> <span class="o">=</span> <span class="n">Thread</span><span class="p">(</span>
+                <span class="n">target</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_ble_data_thread</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_incomming_data_thread</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+
+            <span class="c1"># Wait for BLE connection.</span>
+            <span class="k">return</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_wait_for_connection</span><span class="p">())</span>
+
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;Error connecting from BLE device&#39;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">False</span></div>
+
+<div class="viewcode-block" id="BleTouchSdk.disconnect"><a class="viewcode-back" href="../apidocs.html#ble_touch_sdk.BleTouchSdk.disconnect">[docs]</a>    <span class="k">def</span> <span class="nf">disconnect</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Disconnects BLE TouchDetect</span>
+
+<span class="sd">        :return: true if disconnection was successful, False otherwise</span>
+<span class="sd">        :rtype: boolean</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_connected</span><span class="p">():</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Data thread not running. Call connect() first&#39;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">False</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="c1"># Send the signal to stop the thread.</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_stop_notify_loop_event</span><span class="o">.</span><span class="n">set</span><span class="p">()</span>
+            <span class="c1"># Wait until connection thread finishes.</span>
+            <span class="k">while</span> <span class="bp">self</span><span class="o">.</span><span class="n">_incomming_data_thread</span><span class="o">.</span><span class="n">is_alive</span><span class="p">():</span>
+                <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="n">BLE_UPDATE_LOOP_TIME</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;Error disconnecting from BLE device&#39;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Disconnected from BLE device&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">True</span></div>
+
+<div class="viewcode-block" id="BleTouchSdk.get_data"><a class="viewcode-back" href="../apidocs.html#ble_touch_sdk.BleTouchSdk.get_data">[docs]</a>    <span class="k">def</span> <span class="nf">get_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get latests data sent from BLE device</span>
+
+<span class="sd">        :return: list of tuples with format: (timestamp, data)</span>
+<span class="sd">        :rtype: list</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_connected</span><span class="p">():</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Data thread not running. Call connect() first.&#39;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_incomming_data_queue</span><span class="o">.</span><span class="n">empty</span><span class="p">():</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;No data from BLE device.&#39;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_incomming_data_queue</span><span class="o">.</span><span class="n">get_nowait</span><span class="p">()</span></div>
+
+    <span class="k">def</span> <span class="nf">_is_connected</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Check if BLE device is connected.</span>
+
+<span class="sd">        :return: True if SDK is connected to device, False otherwise.</span>
+<span class="sd">        :rtype: boolean</span>
+<span class="sd">        &quot;&quot;&quot;</span>        
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data_thread_lock</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_incomming_data_thread</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_incomming_data_thread</span><span class="o">.</span><span class="n">is_alive</span><span class="p">()</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_device_connected</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">True</span>
+            <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="k">def</span> <span class="nf">_get_mac</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">device_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns the MAC address of device_name.</span>
+<span class="sd">        For running this function you should call first</span>
+<span class="sd">        _discover().</span>
+
+<span class="sd">        :param device_name: name of the BLE device to find</span>
+<span class="sd">        :type device_name: str</span>
+<span class="sd">        :return: string with the MAC address of device_name, None</span>
+<span class="sd">            otherwise</span>
+<span class="sd">        :rtype: str</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_devices_found</span><span class="p">:</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;No devices found. Call search_devices() first&#39;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="k">for</span> <span class="n">device</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_devices_found</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">device</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="n">device_name</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">device</span><span class="o">.</span><span class="n">address</span>
+
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">_wait_for_connection</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Blocks execution of thread until connection is reached.</span>
+
+<span class="sd">        :return: True if connection is successful, False otherwise.</span>
+<span class="sd">        :rtype: boolean</span>
+<span class="sd">        &quot;&quot;&quot;</span>        
+        <span class="n">n_loops</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">WAIT_CONNECTION_TIMEOUT</span> <span class="o">/</span> <span class="n">BLE_CHECK_CONNECTION_SEC</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_loops</span><span class="p">):</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_connected</span><span class="p">():</span>
+                <span class="k">return</span> <span class="kc">True</span>
+            <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="n">BLE_CHECK_CONNECTION_SEC</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">_discover</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Search BLE devices nearby.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">async</span> <span class="k">with</span> <span class="n">BleakScanner</span><span class="p">()</span> <span class="k">as</span> <span class="n">scanner</span><span class="p">:</span>
+            <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="n">BLE_DISCOVER_TIMEOUT</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">device</span> <span class="ow">in</span> <span class="n">scanner</span><span class="o">.</span><span class="n">discovered_devices</span><span class="p">:</span>
+            <span class="n">ble_device</span> <span class="o">=</span> <span class="n">BleDevice</span><span class="p">(</span><span class="n">device</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">device</span><span class="o">.</span><span class="n">address</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_devices_found</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ble_device</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_ble_data_thread</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Start loop for gathering data from BLE device</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_loop_ble_data</span><span class="o">.</span><span class="n">run_until_complete</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_ble_loop</span><span class="p">())</span>
+
+    <span class="k">def</span> <span class="nf">_ble_data_callback</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sender</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Callback for getting BLE data.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Process incomming data and send it to queue.</span>
+        <span class="n">data_length</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="n">data_values</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">data_length</span><span class="p">):</span>
+            <span class="n">data_values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="nb">int</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">index</span> <span class="o">*</span> <span class="mi">2</span><span class="p">]</span> <span class="o">*</span> <span class="mi">256</span> <span class="o">+</span> <span class="n">data</span><span class="p">[</span><span class="n">index</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]))</span>
+        <span class="n">timestamp</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_timestamp_start</span>
+        <span class="c1"># Empty queue before adding new element.</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_incomming_data_queue</span><span class="o">.</span><span class="n">full</span><span class="p">():</span>
+            <span class="k">while</span> <span class="bp">self</span><span class="o">.</span><span class="n">_incomming_data_queue</span><span class="o">.</span><span class="n">full</span><span class="p">():</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_incomming_data_queue</span><span class="o">.</span><span class="n">get_nowait</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_incomming_data_queue</span><span class="o">.</span><span class="n">put_nowait</span><span class="p">((</span><span class="n">timestamp</span><span class="p">,</span> <span class="n">data_values</span><span class="p">))</span>
+
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">_ble_loop</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Loop for getting notifications for getting data from BLE.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Set notification callbacks for BLE data.</span>
+        <span class="n">ble_client</span> <span class="o">=</span> <span class="n">BleakClient</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_device_mac</span><span class="p">)</span>
+        <span class="k">await</span> <span class="n">ble_client</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span>
+        <span class="k">await</span> <span class="n">ble_client</span><span class="o">.</span><span class="n">start_notify</span><span class="p">(</span><span class="n">BLE_NOTIFY_UUID</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ble_data_callback</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_device_connected</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">while</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_stop_notify_loop_event</span><span class="o">.</span><span class="n">is_set</span><span class="p">():</span>
+            <span class="c1"># sleep for short period of time.</span>
+            <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="n">BLE_UPDATE_LOOP_TIME</span><span class="p">)</span>
+        <span class="c1"># Stop BLE notifications.</span>
+        <span class="k">await</span> <span class="n">ble_client</span><span class="o">.</span><span class="n">stop_notify</span><span class="p">(</span><span class="n">BLE_NOTIFY_UUID</span><span class="p">)</span>
+        <span class="k">await</span> <span class="n">ble_client</span><span class="o">.</span><span class="n">disconnect</span><span class="p">()</span></div>
+</pre></div>
+
+              </div>
+              
+              
+              <!-- Previous / next buttons -->
+<div class='prev-next-area'>
+</div>
+              
+          </main>
+          
+
+      </div>
+    </div>
+  
+  <script src="../_static/js/index.be7d3bbb2ef33a8344ce.js"></script>
+<footer class="footer mt-5 mt-md-0">
+  <div class="container">
+    
+    <div class="footer-item">
+      <p class="copyright">
+    &copy; Copyright 2022, Gonzalo Cervetti.<br>
+</p>
+    </div>
+    
+    <div class="footer-item">
+      <p class="sphinx-version">
+Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.3.2.<br>
+</p>
+    </div>
+    
+  </div>
+</footer>
+  </body>
+</html>
