@@ -10,7 +10,7 @@ from bleak import BleakClient, BleakScanner
 from threading import Thread, Event, Lock
 
 sys.path.append(os.path.dirname(__file__))  # noqa
-from ble_device import BleDevice  # noqa
+from .ble_device import BleDevice  # noqa
 
 # Amount of time to wait for connection
 WAIT_CONNECTION_TIMEOUT = 5.0

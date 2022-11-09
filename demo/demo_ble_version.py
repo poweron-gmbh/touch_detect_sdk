@@ -8,7 +8,7 @@ import time
 
 # This allows demo.py see modules that are one level up.
 sys.path.append(os.getcwd())  # noqa
-from ble_touch_sdk import BleTouchSdk  # noqa
+from src.ble_touch_sdk import BleTouchSdk  # noqa
 
 # Possible returning values of the script.
 EXIT_SUCCESS = 0
