@@ -6,7 +6,7 @@ import logging
 import pytest
 import time
 
-from ble_touch_sdk import BleTouchSdk
+from src.ble_touch_sdk import BleTouchSdk
 
 # Change this to the device name used for tests.
 BLE_DEVICE_NAME = 'PWRON1'

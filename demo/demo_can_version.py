@@ -8,8 +8,8 @@ import time
 
 # This allows demo.py see modules that are one level up.
 sys.path.append(os.getcwd())  # noqa
-from can_touchdetect_sdk import CanTouchSdk
-from can_touchdetect_sdk import CanDevice
+from src.can_touch_sdk import CanTouchSdk
+from src.can_device import CanDevice
 
 # Possible returning values of the script.
 EXIT_SUCCESS = 0

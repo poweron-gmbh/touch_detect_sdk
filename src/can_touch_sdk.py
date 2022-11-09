@@ -9,7 +9,7 @@ import asyncio
 import serial #pyserial
 
 sys.path.append(os.path.dirname(__file__))  # noqa
-from can_device import CanDevice  # noqa
+from .can_device import CanDevice  # noqa
 
 # Amount of time to wait for connection
 WAIT_CONNECTION_TIMEOUT = 5.0
