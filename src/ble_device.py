@@ -1,9 +1,14 @@
 #!/usr/bin/env python3
-class BleDevice:
+
+from .touch_detect_device import TouchDetectDevice, TouchDetectModel
+
+
+class BleDevice(TouchDetectDevice):
     """Represents a BLE device. 
     """
 
     def __init__(self, name: str = None, address: str = None):
+        super().__init__(name=name, address=address, model=TouchDetectModel.BLE)
         """Initialize BLE TouchDetect SDK instance.
 
         :param name: URL to the nasm installer, defaults to None
@@ -11,23 +16,3 @@ class BleDevice:
         :param address:  MAC address of the BLE device, defaults to None
         :type address: str, optional
         """
-        self._name = name
-        self._address = address
-
-    @property
-    def name(self):
-        """Name of the BLE device
-
-        :return: name of the device
-        :rtype: str
-        """
-        return self._name
-
-    @property
-    def address(self):
-        """Address of the BLE device
-
-        :return:  MAC address of the BLE device
-        :rtype: str
-        """
-        return self._address

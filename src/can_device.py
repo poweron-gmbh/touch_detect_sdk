@@ -1,12 +1,16 @@
 #!/usr/bin/env python3
 import serial
 
+from .touch_detect_device import TouchDetectDevice, TouchDetectModel
 
-class CanDevice:
+
+class CanDevice(TouchDetectDevice):
     """Represents a CAN UART device.
     """
 
-    def __init__(self, name: str = None, address: str = None):
+    def __init__(self, name: str = None, address: str = None,
+                 start_id_can: int = 0):
+        super().__init__(name=name, address=address, model=TouchDetectModel.CAN)
         """Initialize CAN TouchDetect SDK instance.
 
         :param name: URL to the nasm installer, defaults to None
@@ -22,23 +26,8 @@ class CanDevice:
         self._bytesize = 8
 
     @property
-    def name(self):
-        """Name of the CAN device | port
-
-        :return: name of the devices port
-        :rtype: str
-        """
-        return self._name
-
-    @property
-    def address(self):
-        """Address of the CAN device
-
-        :return:  Address of the CAN devices port
-        :default: None
-        :rtype: str
-        """
-        return self._address
+    def can_id(self):
+        return self._can_id
 
     @property
     def baudrate(self):
