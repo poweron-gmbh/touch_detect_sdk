@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from .touch_detect_device import TouchDetectDevice, TouchDetectModel
+from .touch_detect_device import TouchDetectDevice, TouchDetectType
 
 
 class BleDevice(TouchDetectDevice):
