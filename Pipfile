@@ -5,11 +5,15 @@ name = "pypi"
 
 [packages]
 bleak = "*"
+numpy = "*"
+serial = "*"
+future = "*"
 
 [dev-packages]
 pytest = "*"
-autopep8 = "*"
 pylint = "*"
+pytest-mock = "*"
+autopep8 = "*"
 
 [requires]
 python_version = "3.9"

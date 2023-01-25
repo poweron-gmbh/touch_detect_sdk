@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 import serial
 
-from .touch_detect_device import TouchDetectDevice, TouchDetectModel
+from .touch_detect_device import TouchDetectDevice, TouchDetectType
 
 
 class CanDevice(TouchDetectDevice):

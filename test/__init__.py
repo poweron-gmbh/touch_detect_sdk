@@ -1,2 +1,3 @@
 # __init__.py
-from .test_ble_touch_sdk import TestBleTouchSdk
+
+from .test_touch_detect_device import TestTouchDetectDevice
