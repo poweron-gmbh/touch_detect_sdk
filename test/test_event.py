@@ -44,7 +44,7 @@ def handler_2(sender: object, earg):
 
 
 class TestEvent:
-    """Test BleDevice
+    """Test Event
     """
 
 # pylint: disable=redefined-outer-name
@@ -106,6 +106,27 @@ class TestEvent:
 
         # Assert
         assert uut.handler_1_data == 2
+        assert uut.handler_2_data == 2
+        assert not uut.earg
+
+    def test_unsubscribe(self):
+        """Subscribe to an event and check unsubscribing
+        """
+
+        # Arrange
+        uut = Publisher()
+        uut.event += handler_1
+        uut.event += handler_2
+
+        # Act
+        uut.fire_event()
+        uut.event -= handler_1
+        uut.fire_event()
+
+        # Assert
+        # Handler 1 should be called only once
+        assert uut.handler_1_data == 1
+        # Handler 2 calls shouldn't be affected at all
         assert uut.handler_2_data == 2
         assert not uut.earg
 
