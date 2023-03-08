@@ -1,9 +1,11 @@
 #!/usr/bin/env python3
 
-"""Tests for CAN touch_detect_device"""
+"""Describes a CAN Device"""
 
+from enum import Enum, unique
 import serial
 
+from .event import Event
 from .touch_detect_device import TouchDetectDevice, TouchDetectType
 
 # Default values for serial port.
@@ -11,11 +13,41 @@ BAUDRATE = 1000000
 PARITY = serial.PARITY_NONE
 STOP_BITS = serial.STOPBITS_ONE
 BYTE_SIZE = 8
+DEFAULT_TIMOUT_SEC = 0.5
+
+
+@unique
+class CanEventType(Enum):
+    """Represents different type of events triggered by CAN touch detect.
+    """
+    ERROR_CLOSING_PORT = 1
+    ERROR_OPENING_PORT = 2
+    CONNECTED = 3
+    DISCONNECTED = 4
+    NEW_DATA = 5
+
+
+class CanEventData():
+    """Encapsulates event data for CAN events.
+    """
+
+    def __init__(self, event: CanEventType, data: list = None):
+        """Initialize class
+
+        :param event: type of event triggered
+        :type event: CanEventType
+        :param data: relevant data for the event, defaults to None
+        :type data: list, optional
+        """
+        self.event_type = event
+        self.data = data
 
 
 class CanDevice(TouchDetectDevice):
     """Represents a CAN device.
     """
+    # Event object
+    events = Event('')
 
     def __init__(self, name: str, address: str,
                  taxels_array_size: tuple = (6, 6), baudrate: int = BAUDRATE,
@@ -46,9 +78,39 @@ class CanDevice(TouchDetectDevice):
         self._port_handler.parity = parity
         self._port_handler.stopbits = stop_bits
         self._port_handler.bytesize = byte_size
+        self._port_handler.timeout = DEFAULT_TIMOUT_SEC
+
+        self._data_buffer = []
 
     @property
     def port_handler(self) -> serial.Serial:
         """port_handler getter.
         """
-        return self._port_handler
+        with self._lock:
+            return self._port_handler
+
+    @property
+    def data_buffer(self) -> list:
+        """data_buffer getter.
+        """
+        with self._lock:
+            return self._data_buffer
+
+    @data_buffer.setter
+    def data_buffer(self, data: list) -> None:
+        """set data buffer.
+
+        :param data: new data array.
+        :type data: np.array
+        """
+        with self._lock:
+            self._data_buffer = data
+
+    def fire_event(self, event_type: CanEventType, event_data: list = None):
+        """Fires the event of the class.
+
+        :param earg: parameters to send through the event, defaults to None
+        :type earg: object, optional
+        """
+        event_data = CanEventData(event_type, event_data)
+        self.events(event_data)

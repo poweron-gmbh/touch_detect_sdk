@@ -5,8 +5,8 @@
 from enum import Enum, unique
 
 import logging
+import threading
 import numpy as np
-
 
 @unique
 class TouchDetectType(Enum):
@@ -15,6 +15,7 @@ class TouchDetectType(Enum):
     VIRTUAL = 0
     CAN = 1
     BLE = 2
+    TCP = 3
 
 
 class ConnectionStatus(Enum):
@@ -25,7 +26,7 @@ class ConnectionStatus(Enum):
     CONNECTION_LOST = 2
 
 
-class TouchDetectDevice:
+class TouchDetectDevice(object):
     """Represents a Touch Detect device.
     """
 
@@ -55,6 +56,8 @@ class TouchDetectDevice:
         self._taxels_array_size = taxels_array_size
         self._taxel_array = np.zeros(shape=self._taxels_array_size)
 
+        self._lock = threading.Lock()
+
         self._logger = logging.getLogger(__name__)
 
     @property
@@ -63,7 +66,18 @@ class TouchDetectDevice:
         :return: name of the device
         :rtype: str
         """
-        return self._name
+        with self._lock:
+            return self._name
+
+    @name.setter
+    def name(self, data: str) -> None:
+        """Set taxel data in touch detect.
+
+        :param data: new data array.
+        :type data: np.array
+        """
+        with self._lock:
+            self._name = data
 
     @property
     def address(self) -> str:
@@ -71,7 +85,8 @@ class TouchDetectDevice:
         :return: address of the device
         :rtype: str
         """
-        return self._address
+        with self._lock:
+            return self._address
 
     @property
     def device_type(self) -> TouchDetectType:
@@ -79,7 +94,8 @@ class TouchDetectDevice:
         :return: device type
         :rtype: TouchDetectType
         """
-        return self._touch_detect_type
+        with self._lock:
+            return self._touch_detect_type
 
     @property
     def taxels_array_size(self) -> tuple:
@@ -87,7 +103,8 @@ class TouchDetectDevice:
         :return: size of array size.
         :rtype: tuple
         """
-        return self._taxels_array_size
+        with self._lock:
+            return self._taxels_array_size
 
     @property
     def taxels_array(self) -> np.array:
@@ -95,7 +112,8 @@ class TouchDetectDevice:
         :return: taxel array.
         :rtype: np.ndarray
         """
-        return self._taxel_array
+        with self._lock:
+            return self._taxel_array
 
     @taxels_array.setter
     def taxels_array(self, data: np.array) -> None:
@@ -104,8 +122,9 @@ class TouchDetectDevice:
         :param data: new data array.
         :type data: np.array
         """
-        if self._taxels_array_size != data.shape:
-            logging.error(
-                'Attempt to write touch_detect_device array with different size.')
-            return
-        self._taxel_array = data
+        with self._lock:
+            if self._taxels_array_size != data.shape:
+                logging.error(
+                    'Attempt to write touch_detect_device array with different size.')
+                return
+            self._taxel_array = data
