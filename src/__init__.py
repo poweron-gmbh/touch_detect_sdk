@@ -8,3 +8,5 @@ from .event import Event
 from .event import EventHandler
 from .touch_detect_device import TouchDetectDevice
 from .touch_detect_device import TouchDetectType
+from .wsg_device import WsgDevice
+from .wsg_gripper_touch_sdk import Crc16Generator
