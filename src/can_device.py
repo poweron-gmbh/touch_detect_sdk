@@ -39,7 +39,7 @@ class CanEventData():
         :param data: relevant data for the event, defaults to None
         :type data: list, optional
         """
-        self.event_type = event
+        self.type = event
         self.data = data
 
 
@@ -49,15 +49,15 @@ class CanDevice(TouchDetectDevice):
     # Event object
     events = Event('')
 
-    def __init__(self, name: str, address: str,
+    def __init__(self, address: str, name: str = '',
                  taxels_array_size: tuple = (6, 6), baudrate: int = BAUDRATE,
                  parity: str = PARITY, stop_bits: float = STOP_BITS, byte_size: int = BYTE_SIZE):
         """Initialize CAN object.
 
-        :param name: Name of serial port
-        :type name: str
         :param address: Address of the device
         :type address: str
+        :param name: Name of serial port
+        :type name: str
         :param taxels_array_size: size of the array, defaults to (6, 6)
         :type taxels_array_size: tuple, optional
         :param baudrate: Baudrate of the connection, defaults to BAUDRATE
@@ -70,7 +70,7 @@ class CanDevice(TouchDetectDevice):
         :type byte_size: int, optional
         """
 
-        super().__init__(name, address, TouchDetectType.CAN, taxels_array_size)
+        super().__init__(address, name, TouchDetectType.CAN, taxels_array_size)
 
         self._port_handler = serial.Serial()
         self._port_handler.port = address
@@ -106,11 +106,11 @@ class CanDevice(TouchDetectDevice):
         with self._lock:
             self._data_buffer = data
 
-    def fire_event(self, event_type: CanEventType, event_data: list = None):
+    def fire_event(self, type: CanEventType, event_data: list = None):
         """Fires the event of the class.
 
         :param earg: parameters to send through the event, defaults to None
         :type earg: object, optional
         """
-        event_data = CanEventData(event_type, event_data)
+        event_data = CanEventData(type, event_data)
         self.events(event_data)

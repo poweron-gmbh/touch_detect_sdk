@@ -185,7 +185,7 @@ class CanTouchSdk:
         device_list = []
         for port in comports():
             if port.manufacturer in SUPPORTED_MANUFACTURERS_LIST:
-                device = CanDevice('', port.name)
+                device = CanDevice(port.name)
                 device_list.append(device)
         return device_list
 

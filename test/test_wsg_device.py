@@ -18,7 +18,7 @@ TCP_PORT = 1000
 def default_wsg_device():
     """Setup unit under test.
     """
-    wsg_device = WsgDevice(TEST_WSG_NAME, TEST_WSG_PORT)
+    wsg_device = WsgDevice(TEST_WSG_PORT, TEST_WSG_NAME)
     yield wsg_device
     del wsg_device
 

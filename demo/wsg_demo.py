@@ -33,21 +33,21 @@ class EventTester:
         """
         # Filter events only from one sensor.
         if sender.address == socket.gethostname():
-            if event_data.event_type == WsgEventType.CONNECTED:
+            if event_data.type == WsgEventType.CONNECTED:
                 print('Device connected')
-            elif event_data.event_type == WsgEventType.DISCONNECTED:
+            elif event_data.type == WsgEventType.DISCONNECTED:
                 print('Device disconnected')
-            elif event_data.event_type == WsgEventType.ERROR_OPENING_PORT:
+            elif event_data.type == WsgEventType.ERROR_OPENING_PORT:
                 print('Error opening port')
-            elif event_data.event_type == WsgEventType.ERROR_CLOSING_PORT:
+            elif event_data.type == WsgEventType.ERROR_CLOSING_PORT:
                 print('Error closing port')
-            elif event_data.event_type == WsgEventType.NEW_DATA:
+            elif event_data.type == WsgEventType.NEW_DATA:
                 print('New data received')
 
 
 def main():
     uut = WsgGripperTouchSdk()
-    test_device = WsgDevice('', WSG_IP)
+    test_device = WsgDevice(WSG_IP, '')
     tester = EventTester()
     test_device.events += tester.event_handler
 

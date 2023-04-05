@@ -26,13 +26,13 @@ CAN_DEVICE_NAME = 'COM18'
 def event_handler(sender: object, event_data: CanEventData):
     # Filter events only from one sensor.
     if sender.address == CAN_DEVICE_NAME:
-        if event_data.event_type == CanEventType.CONNECTED:
+        if event_data.type == CanEventType.CONNECTED:
             print('Device connected')
-        elif event_data.event_type == CanEventType.DISCONNECTED:
+        elif event_data.type == CanEventType.DISCONNECTED:
             print('Device disconnected')
-        elif event_data.event_type == CanEventType.ERROR_CLOSING_PORT:
+        elif event_data.type == CanEventType.ERROR_CLOSING_PORT:
             print('Error closing port')
-        elif event_data.event_type == CanEventType.NEW_DATA:
+        elif event_data.type == CanEventType.NEW_DATA:
             print('New data')
             print(event_data.data)
 
