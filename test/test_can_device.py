@@ -22,7 +22,7 @@ BYTE_SIZE = 8
 def default_can_device():
     """Setup unit under test.
     """
-    can_device = CanDevice(TEST_CAN_NAME, TEST_CAN_PORT)
+    can_device = CanDevice(TEST_CAN_PORT, TEST_CAN_NAME)
     yield can_device
     del can_device
 

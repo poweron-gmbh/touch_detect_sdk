@@ -8,6 +8,7 @@ import logging
 import threading
 import numpy as np
 
+
 @unique
 class TouchDetectType(Enum):
     """Describes possible modes of TouchDetect.
@@ -31,8 +32,8 @@ class TouchDetectDevice(object):
     """
 
     def __init__(self,
-                 name: str = None,
                  address: str = None,
+                 name: str = None,
                  touch_detect_type: TouchDetectType = TouchDetectType.VIRTUAL,
                  taxels_array_size: tuple = (6, 6)):
         """Initialize TouchDetect.

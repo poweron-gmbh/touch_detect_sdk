@@ -37,7 +37,7 @@ class WsgEventData():
         :param data: relevant data for the event, defaults to None
         :type data: list, optional
         """
-        self.event_type = event
+        self.type = event
         self.data = data
 
 
@@ -47,19 +47,19 @@ class WsgDevice(TouchDetectDevice):
     # Event object
     events = Event('')
 
-    def __init__(self, name: str, address: str,
+    def __init__(self, address: str, name: str = None,
                  taxels_array_size: tuple = (6, 6)):
         """Initialize CAN object.
 
-        :param name: Name of serial port
-        :type name: str
         :param address: Address of the device
         :type address: str
+        :param name: Name of serial port
+        :type name: str
         :param taxels_array_size: size of the array, defaults to (6, 6)
         :type taxels_array_size: tuple, optional
         """
 
-        super().__init__(name, address, TouchDetectType.TCP, taxels_array_size)
+        super().__init__(address, name, TouchDetectType.TCP, taxels_array_size)
 
         self._port_handler = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self._taxels_array_left = np.zeros(shape=self._taxels_array_size)
@@ -112,8 +112,10 @@ class WsgDevice(TouchDetectDevice):
     def fire_event(self, event_type: WsgEventType, event_data: list = None):
         """Fires the event of the class.
 
-        :param earg: parameters to send through the event, defaults to None
-        :type earg: object, optional
+        :param event_type: reason why the event was triggered.
+        :type event_type: WsgEventType
+        :param event_data: useful data linked to the event, defaults to None
+        :type event_data: list, optional
         """
         event_data = WsgEventData(event_type, event_data)
         self.events(event_data)

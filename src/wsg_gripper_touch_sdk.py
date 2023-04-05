@@ -88,7 +88,7 @@ class Crc16Generator():
 
 
 class WsgGripperTouchSdk:
-    """This Class manages the communication with the sensors installed in 
+    """This Class manages the communication with the sensors installed in
        WSG gripper.
     """
 
@@ -151,7 +151,7 @@ class WsgGripperTouchSdk:
 
     @classmethod
     def _connect(cls, wsg_device: WsgDevice):
-        """Thread that handles connection of devices. 
+        """Thread that handles connection of devices.
 
         :param wsg_device: Device to be desconnected.
         :type wsg_device: WsgDevice
@@ -190,7 +190,7 @@ class WsgGripperTouchSdk:
 
     @classmethod
     def _disconnect(cls, wsg_device: WsgDevice):
-        """Thread that handles disconnection of devices. 
+        """Thread that handles disconnection of devices.
 
         :param wsg_device: Device to be desconnected.
         :type wsg_device: WsgDevice
@@ -282,7 +282,7 @@ class WsgGripperTouchSdk:
 
     @staticmethod
     def to_taxel_array(payload: bytearray, taxel_array_size: tuple) -> np.array:
-        """Convert payload coming from WSG gripper into valid sensor array data. 
+        """Convert payload coming from WSG gripper into valid sensor array data.
 
         :param payload: data to be converted
         :type payload: bytearray

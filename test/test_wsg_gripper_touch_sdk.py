@@ -131,7 +131,7 @@ class EventTester:
     """
 
     def __init__(self):
-        self.event_type = WsgEventType.DISCONNECTED
+        self.type = WsgEventType.DISCONNECTED
         self.call_count = 0
 
     def event_handler(self, sender: object, event_data: WsgEventData):
@@ -144,20 +144,20 @@ class EventTester:
         """
         # Filter events only from one sensor.
         if sender.address == socket.gethostname():
-            if event_data.event_type == WsgEventType.CONNECTED:
-                self.event_type = WsgEventType.CONNECTED
+            if event_data.type == WsgEventType.CONNECTED:
+                self.type = WsgEventType.CONNECTED
                 self.call_count += 1
-            elif event_data.event_type == WsgEventType.DISCONNECTED:
-                self.event_type = WsgEventType.DISCONNECTED
+            elif event_data.type == WsgEventType.DISCONNECTED:
+                self.type = WsgEventType.DISCONNECTED
                 self.call_count += 1
-            elif event_data.event_type == WsgEventType.ERROR_OPENING_PORT:
-                self.event_type = WsgEventType.ERROR_OPENING_PORT
+            elif event_data.type == WsgEventType.ERROR_OPENING_PORT:
+                self.type = WsgEventType.ERROR_OPENING_PORT
                 self.call_count += 1
-            elif event_data.event_type == WsgEventType.ERROR_CLOSING_PORT:
-                self.event_type = WsgEventType.ERROR_CLOSING_PORT
+            elif event_data.type == WsgEventType.ERROR_CLOSING_PORT:
+                self.type = WsgEventType.ERROR_CLOSING_PORT
                 self.call_count += 1
-            elif event_data.event_type == WsgEventType.NEW_DATA:
-                self.event_type = WsgEventType.NEW_DATA
+            elif event_data.type == WsgEventType.NEW_DATA:
+                self.type = WsgEventType.NEW_DATA
                 self.call_count += 1
 
 
@@ -273,7 +273,7 @@ class TestWsgGripperTouchSdk:
         """
         # Arrange
         uut = WsgGripperTouchSdk()
-        test_device = WsgDevice('', socket.gethostname())
+        test_device = WsgDevice(socket.gethostname(), '')
         test_device.events += event_tester_setup.event_handler
 
         # Act
@@ -281,14 +281,14 @@ class TestWsgGripperTouchSdk:
         thread.join()
 
         # Assert
-        assert event_tester_setup.event_type == WsgEventType.ERROR_OPENING_PORT
+        assert event_tester_setup.type == WsgEventType.ERROR_OPENING_PORT
 
     def test_connection_successful(self, event_tester_setup):
         """Test for connection successful.
         """
         # Arrange
         uut = WsgGripperTouchSdk()
-        test_device = WsgDevice('', socket.gethostname())
+        test_device = WsgDevice(socket.gethostname(), '')
         test_device.events += event_tester_setup.event_handler
         wsg_emulator = WsgEmulator()
 
@@ -299,20 +299,20 @@ class TestWsgGripperTouchSdk:
 
         # Assert
         assert event_tester_setup.call_count == 1
-        assert event_tester_setup.event_type == WsgEventType.CONNECTED
+        assert event_tester_setup.type == WsgEventType.CONNECTED
 
         # Disconnect and check disconnection
         thread = uut.disconnect(test_device)
         thread.join()
         wsg_emulator.stop()
-        assert event_tester_setup.event_type == WsgEventType.DISCONNECTED
+        assert event_tester_setup.type == WsgEventType.DISCONNECTED
 
     def test_get_data(self, event_tester_setup):
         """Test for connecting and getting data.
         """
         # Arrange
         uut = WsgGripperTouchSdk()
-        test_device = WsgDevice('', socket.gethostname())
+        test_device = WsgDevice(socket.gethostname(), '')
         test_device.events += event_tester_setup.event_handler
         wsg_emulator = WsgEmulator()
 
@@ -322,17 +322,17 @@ class TestWsgGripperTouchSdk:
         wsg_emulator.accept()
         # Assert
         assert event_tester_setup.call_count == 1
-        assert event_tester_setup.event_type == WsgEventType.CONNECTED
+        assert event_tester_setup.type == WsgEventType.CONNECTED
 
         # Assert new data event.
         time.sleep(0.1)
-        assert event_tester_setup.event_type == WsgEventType.NEW_DATA
+        assert event_tester_setup.type == WsgEventType.NEW_DATA
 
         # Act
         thread = uut.disconnect(test_device)
         thread.join()
         wsg_emulator.stop()
         # Assert
-        assert event_tester_setup.event_type == WsgEventType.DISCONNECTED
+        assert event_tester_setup.type == WsgEventType.DISCONNECTED
 
 # pylint: enable=redefined-outer-name
