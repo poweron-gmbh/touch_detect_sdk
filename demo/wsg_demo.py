@@ -9,8 +9,8 @@ import sys
 import time
 
 sys.path.append(os.getcwd())  # noqa
-from src.wsg_gripper_touch_sdk import WsgGripperTouchSdk  # noqa
-from src.wsg_device import WsgDevice, WsgEventType, WsgEventData  # noqa
+from touch_detect_sdk.wsg_gripper_touch_sdk import WsgGripperTouchSdk  # noqa
+from touch_detect_sdk.wsg_device import WsgDevice, WsgEventType, WsgEventData  # noqa
 
 # Possible returning values of the script.
 EXIT_SUCCESS = 0

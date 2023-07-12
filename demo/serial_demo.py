@@ -8,7 +8,6 @@ import logging
 import sys
 import time
 
-import matplotlib.pyplot as plt
 import numpy as np
 
 import serial
@@ -27,9 +26,9 @@ EXIT_SUCCESS = 0
 EXIT_FAILURE = 1
 
 # Amount of samples to take from device.
-N_SAMPLES = 100
+N_SAMPLES = 1000
 # Device port to connect.
-SERIAL_PORT = 'COM26'
+SERIAL_PORT = 'COM27'
 
 # Update rate to request new data.
 UPDATE_RATE_SEC = 0.001

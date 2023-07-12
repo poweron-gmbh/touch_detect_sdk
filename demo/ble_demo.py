@@ -9,8 +9,8 @@ import time
 
 # This allows demo.py see modules that are one level up.
 sys.path.append(os.getcwd())  # noqa
-from src.ble_touch_sdk import BleTouchSdk
-from src.ble_device import BleEventInfo, BleEventType
+from touch_detect_sdk.ble_touch_sdk import BleTouchSdk
+from touch_detect_sdk.ble_device import BleEventInfo, BleEventType
 
 # Possible returning values of the script.
 EXIT_SUCCESS = 0
