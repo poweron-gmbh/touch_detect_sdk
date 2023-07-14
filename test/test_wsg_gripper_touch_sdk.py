@@ -13,8 +13,8 @@ from pytest_mock import MockerFixture
 
 import numpy as np
 
-from src.wsg_gripper_touch_sdk import WsgGripperTouchSdk
-from src.wsg_device import WsgDevice, WsgEventData, WsgEventType
+from touch_detect_sdk.wsg_gripper_touch_sdk import WsgGripperTouchSdk
+from touch_detect_sdk.wsg_device import WsgDevice, WsgEventData, WsgEventType
 
 # array of 16bit values that represents sensor array data from ADC.
 TEST_SENSOR_DATA = bytearray(b'\x0001\x0002\x0003\x0004\x0005\x0006'
@@ -243,7 +243,7 @@ class TestWsgGripperTouchSdk:
         """
         # Arrange
         create_task_mock = mocker.patch(
-            "src.wsg_gripper_touch_sdk.Thread.start")
+            "touch_detect_sdk.wsg_gripper_touch_sdk.Thread.start")
         uut = WsgGripperTouchSdk()
         test_device = WsgDevice('', socket.gethostname())
 
@@ -258,7 +258,7 @@ class TestWsgGripperTouchSdk:
         """
         # Arrange
         create_task_mock = mocker.patch(
-            "src.wsg_gripper_touch_sdk.Thread.start")
+            "touch_detect_sdk.wsg_gripper_touch_sdk.Thread.start")
         uut = WsgGripperTouchSdk()
         test_device = WsgDevice('', socket.gethostname())
 

@@ -6,8 +6,8 @@ import pytest
 
 from pytest_mock import MockerFixture
 
-from src.ble_touch_sdk import BleTouchSdk
-from src.ble_device import BleDevice, BleEventType, BleEventInfo
+from touch_detect_sdk.ble_touch_sdk import BleTouchSdk
+from touch_detect_sdk.ble_device import BleDevice, BleEventType, BleEventInfo
 
 TEST_DEVICE_ID = 'PWRON1'
 TEST_MAC = 'DC:EE:FF:C8:6A:10'
@@ -77,7 +77,7 @@ class TestBleTouchSdk:
         """
         # Arrange
         create_task_mock = mocker.patch(
-            "src.ble_touch_sdk.Thread.start")
+            "touch_detect_sdk.ble_touch_sdk.Thread.start")
         uut = BleTouchSdk()
         test_device = BleDevice(TEST_MAC, TEST_DEVICE_ID, '')
 

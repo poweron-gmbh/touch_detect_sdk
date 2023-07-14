@@ -7,7 +7,7 @@ import pytest
 from pytest_mock import MockerFixture
 
 
-from src.can_touch_sdk import CanTouchSdk
+from touch_detect_sdk.can_touch_sdk import CanTouchSdk
 
 SUPPORTED_DEVICE_DESCRIPTION = 'USB Serial Port'
 SUPPORTED_MANUFACTURERS_LIST = 'FTDI'

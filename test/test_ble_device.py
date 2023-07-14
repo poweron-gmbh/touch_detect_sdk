@@ -4,8 +4,8 @@
 
 import pytest
 
-from src.ble_device import BleDevice
-from src.touch_detect_device import TouchDetectType
+from touch_detect_sdk.ble_device import BleDevice
+from touch_detect_sdk.touch_detect_device import TouchDetectType
 
 TEST_BLE_NAME = 'TEST DEVICE'
 TEST_BLE_ID = 'PWRN1'

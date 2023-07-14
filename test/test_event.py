@@ -4,7 +4,7 @@
 
 from threading import Thread
 
-from src.event import Event
+from touch_detect_sdk.event import Event
 
 DEFAULT_DESCRIPTION = 'Testing Event'
 TEST_MESSAGE = 'test'
