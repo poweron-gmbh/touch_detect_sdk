@@ -5,8 +5,8 @@
 import serial
 import pytest
 
-from src.can_device import CanDevice
-from src.touch_detect_device import TouchDetectType
+from touch_detect_sdk.can_device import CanDevice
+from touch_detect_sdk.touch_detect_device import TouchDetectType
 
 TEST_CAN_NAME = 'TOUCH_DETECT_LEFT'
 TEST_CAN_PORT = 'COM1'

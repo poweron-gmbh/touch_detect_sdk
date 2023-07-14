@@ -4,8 +4,8 @@
 
 import pytest
 
-from src.wsg_device import WsgDevice
-from src.touch_detect_device import TouchDetectType
+from touch_detect_sdk.wsg_device import WsgDevice
+from touch_detect_sdk.touch_detect_device import TouchDetectType
 
 TEST_WSG_NAME = 'WSG_GRIPPER_1'
 TEST_WSG_PORT = 1000

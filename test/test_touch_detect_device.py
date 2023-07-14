@@ -7,7 +7,7 @@ import pytest
 import numpy as np
 
 from pytest_mock import MockerFixture
-from src.touch_detect_device import TouchDetectDevice, TouchDetectType
+from touch_detect_sdk.touch_detect_device import TouchDetectDevice, TouchDetectType
 
 # Change this to the device name used for tests.
 TEST_NAME = 'PWRON1'
@@ -54,7 +54,7 @@ class TestTouchDetectDevice:
         """Modify taxels with default array size.
         """
         # Arrange
-        log_mock = mocker.patch("src.touch_detect_device.logging")
+        log_mock = mocker.patch("touch_detect_sdk.touch_detect_device.logging")
         log_mock.getLogger.return_value = logging.getLogger()
 
         # Act
@@ -75,7 +75,7 @@ class TestTouchDetectDevice:
         """Mofidy taxel values with different array size.
         """
         # Arrange
-        log_mock = mocker.patch("src.touch_detect_device.logging")
+        log_mock = mocker.patch("touch_detect_sdk.touch_detect_device.logging")
         log_mock.getLogger.return_value = logging.getLogger()
 
         # Act

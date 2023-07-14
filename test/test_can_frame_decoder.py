@@ -5,7 +5,7 @@
 import numpy as np
 import pytest
 
-from src.can_touch_sdk import CanFrameDecoder
+from touch_detect_sdk.can_touch_sdk import CanFrameDecoder
 
 TEST_VALID_FRAME_1 = bytearray(
     b'\xFF\x00\x53\x00\x02\x80\x41\x80\x6D\x80\x6C\x00\x45\x00\x04\x80\x6F\x80\x23\x80\x47\xFE')
