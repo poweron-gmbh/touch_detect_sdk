@@ -17,6 +17,7 @@ class TouchDetectType(Enum):
     CAN = 1
     BLE = 2
     TCP = 3
+    SERIAL = 4
 
 
 class ConnectionStatus(Enum):
@@ -47,16 +48,16 @@ class TouchDetectDevice(object):
         :param taxels_array_size: size of the sensor array, defaults to (6, 6)
         :type taxels_array_size: tuple, optional
         """
-        self.connection_status = ConnectionStatus.DISCONNECTED
-        self.acquisition_running = False
-        self.rotation = 0
-
-        self._name = name
+        self._acquisition_running = False
         self._address = address
+        self._connection_status = ConnectionStatus.DISCONNECTED
+        self._name = name
+        self._rotation = 0
         self._touch_detect_type = touch_detect_type
         self._taxels_array_size = taxels_array_size
         self._taxel_array = np.zeros(shape=self._taxels_array_size)
 
+        # Lock for sharing variables across different threads.
         self._lock = threading.Lock()
 
         self._logger = logging.getLogger(__name__)
@@ -129,3 +130,57 @@ class TouchDetectDevice(object):
                     'Attempt to write touch_detect_device array with different size.')
                 return
             self._taxel_array = data
+
+    @property
+    def connection_status(self) -> ConnectionStatus:
+        """Status of connection of the device.
+        :rtype: ConnectionStatus
+        """
+        with self._lock:
+            return self._taxels_array_size
+
+    @connection_status.setter
+    def connection_status(self, data: ConnectionStatus) -> None:
+        """Set connection status of device.
+
+        :param data: new status.
+        :type data: ConnectionStatus
+        """
+        with self._lock:
+            self._connection_status = data
+
+    @property
+    def rotation(self) -> ConnectionStatus:
+        """Status of connection of the device.
+        :rtype: ConnectionStatus
+        """
+        with self._lock:
+            return self._rotation
+
+    @rotation.setter
+    def rotation(self, data: int) -> None:
+        """Set connection status of device.
+
+        :param data: new status.
+        :type data: ConnectionStatus
+        """
+        with self._lock:
+            self._rotation = data
+
+    @property
+    def acquisition_running(self) -> bool:
+        """Getter for acquisition running flag.
+        :rtype: bool
+        """
+        with self._lock:
+            return self._acquisition_running
+
+    @acquisition_running.setter
+    def acquisition_running(self, data: bool) -> None:
+        """Setter for acquisition running flag.
+
+        :param data: new status.
+        :type data: bool
+        """
+        with self._lock:
+            self._acquisition_running = data
