@@ -1,51 +1,59 @@
 #!/usr/bin/env python3
 
-"""SDK for managing communication with serial touch detect..
+"""SDK for managing communication with serial touch detect.
 """
 import logging
 import time
-
 from threading import Event, Lock, Thread
 
 import numpy as np
 
-from .wsg_device import WsgDevice, WsgEventType
+from serial.serialutil import SerialException
+
+from yahdlc import (
+    FRAME_ACK,
+    FRAME_DATA,
+    frame_data,
+    get_data,
+)
+
+from .serial_device import SerialDevice, SerialEventType, SerialDeviceStatus
 from .touch_detect_device import ConnectionStatus
 
-# Value that represents the start of the frame.
-TRANSACTION_ID = bytearray(b'\xaa\xaa')
-# Value that represents the end of the frame.
-PROTOCOL_ID = bytearray(b'\xaa\xbb')
-# Command for reading left touch_detect
-READ_LEFT_SENSOR_COMMAND = bytearray(b'\x01')
-# Command for reading right touch_detect
-READ_RIGHT_SENSOR_COMMAND = bytearray(b'\x02')
-# Minimum size of a reponse from WSG gripper
-RESPONSE_MIN_LENGTH = 9
 # Update rate of the data of all the sensors in seconds.
-UPDATE_RATE = 0.01
+TIMEOUT = 0.8
+MAX_TIMEOUT_COUNT = 3
+UPDATE_RATE = 0.025
+MIN_PACKAGE_SIZE = 6
+
+SERIAL_DATA_FRAME_SIZE = 72
+
+FRAME_START_BYTE = bytes(b'\x7e')
+FRAME_END_BYTE = bytes(b'\x7e')
+DEVICE_ADDRESS = bytes(b'\xff')
+SERIAL_COMMAND_GET_DATA = bytes(b'\x01')
 
 
-class WsgGripperTouchSdk:
+class SerialTouchSdk:
     """This Class manages the communication with the sensors installed in
-       WSG gripper.
+       serial TouchDetect
     """
 
     @classmethod
     def __init__(cls):
         # Create a logger.
         cls._logger = logging.getLogger(__name__)
-        # Set basic configurations for logging.
+        # Set basic configurations for logging
         logging.basicConfig(encoding='utf-8', level=logging.INFO)
-        # Event for stopping incomming_data_thread.
-        cls._stop_wsg_data_loop = Event()
-        # list of devices that have to be polled for data.
+        # Event for stopping the data thread
+        cls._stop_serial_data_loop = Event()
+        # list of devices that have to be polled for data
         cls._device_list = []
-        # Lock for internal variables.
+        # Lock for internal variables
         cls._lock = Lock()
-        # Checks the status of the task for gathering data from WSG.
+        # Flag for the status of the task for gathering data from sensors
         cls._is_data_task_running = False
-        # List of threads currently running.
+        # List of threads currently running
         cls._thread_list = []
 
     @classmethod
@@ -53,7 +61,7 @@ class WsgGripperTouchSdk:
         """Ensure that threads stopped and connection closed
         """
         if cls._is_data_task_running:
-            cls._stop_wsg_data_loop.set()
+            cls._stop_serial_data_loop.set()
             cls._is_data_task_running = False
         # Finish all running threads
         for thread in cls._thread_list:
@@ -61,235 +69,230 @@ class WsgGripperTouchSdk:
                 thread.join()
 
     @classmethod
-    def connect(cls, wsg_device: WsgDevice) -> Thread:
-        """connects to specific WSG device.
+    def connect(cls, serial_device: SerialDevice) -> Thread:
+        """connects to specific SerialTouchDetect device.
 
-        :param wsg_device: device to connect
-        :type wsg_device: CanDevice
-        :return: Reference to the thread running.
+        :param serial_device: device to connect
+        :type serial_device: SerialDevice
+        :return: Reference to the thread running
         :rtype: Thread
         """
-        thread = Thread(target=cls._connect, args=(wsg_device,))
+        thread = Thread(target=cls._connect, args=(serial_device,))
         thread.start()
         cls._thread_list.append(thread)
         return thread
 
     @classmethod
-    def disconnect(cls, wsg_device: WsgDevice) -> Thread:
-        """Disconnects WSG device.
+    def disconnect(cls, serial_device: SerialDevice) -> Thread:
+        """Disconnects SerialTouchDetect device
 
-        :param wsg_device: device to disconnect
-        :type wsg_device: WsgDevice
-        :return: Reference to the thread running.
+        :param serial_device: device to disconnect
+        :type serial_device: SerialDevice
+        :return: Reference to the thread running
         :rtype: Thread
         """
-        thread = Thread(target=cls._disconnect, args=(wsg_device,))
+        thread = Thread(target=cls._disconnect, args=(serial_device,))
         thread.start()
         cls._thread_list.append(thread)
         return thread
 
     @classmethod
-    def _connect(cls, wsg_device: WsgDevice):
+    def _connect(cls, serial_device: SerialDevice):
         """Thread that handles connection of devices.
 
-        :param wsg_device: Device to be desconnected.
-        :type wsg_device: WsgDevice
+        :param serial_device: Device to be desconnected.
+        :type serial_device: SerialDevice
         """
         # Check if port was already opened.
-        if wsg_device.connection_status == ConnectionStatus.CONNECTED:
-            logging.info('Already connected to a device')
+        if serial_device.connection_status == ConnectionStatus.CONNECTED:
+            logging.info('Already connected')
             return
 
         # Add device if wasn't already in the list.
         with cls._lock:
-            if wsg_device not in cls._device_list:
-                cls._device_list.append(wsg_device)
+            if serial_device not in cls._device_list:
+                cls._device_list.append(serial_device)
 
         # Open the port.
         try:
-            wsg_device.port_handler.connect((
-                wsg_device.address, wsg_device.tcp_port))
-        except ConnectionRefusedError as error:
-            logging.error("Could could not connect to WSG %s: %s",
-                          wsg_device.name, error)
-            wsg_device.fire_event(WsgEventType.ERROR_OPENING_PORT, [error])
-            return False
+            serial_device.port_handler.open()
+        except SerialException as error:
+            logging.error("Could could not connect to Device %s: %s",
+                          serial_device.name, error)
+            serial_device.fire_event(
+                SerialEventType.ERROR_OPENING_PORT, [error])
+            return
 
         # Notify connection.
-        wsg_device.connection_status = ConnectionStatus.CONNECTED
-        wsg_device.fire_event(WsgEventType.CONNECTED)
+        serial_device.connection_status = ConnectionStatus.CONNECTED
+        serial_device.fire_event(SerialEventType.CONNECTED)
 
         # Start the thread in case it wasn't running before.
         if not cls._is_data_task_running:
             cls._is_data_task_running = True
-            cls._stop_wsg_data_loop.clear()
-            thread = Thread(target=cls._wsg_data_task)
+            cls._stop_serial_data_loop.clear()
+            thread = Thread(target=cls._serial_data_task)
             thread.start()
             cls._thread_list.append(thread)
 
     @classmethod
-    def _disconnect(cls, wsg_device: WsgDevice):
+    def _disconnect(cls, serial_device: SerialDevice):
         """Thread that handles disconnection of devices.
 
-        :param wsg_device: Device to be desconnected.
-        :type wsg_device: WsgDevice
+        :param serial_device: Device to be desconnected.
+        :type serial_device: SerialDevice
         """
         # Check if port was already closed.
-        if wsg_device.connection_status == ConnectionStatus.DISCONNECTED:
+        if serial_device.connection_status == ConnectionStatus.DISCONNECTED:
             logging.info('Already disconnected')
             return
 
         # Remove device from the list.
         with cls._lock:
-            if wsg_device in cls._device_list:
-                cls._device_list.remove(wsg_device)
+            if serial_device in cls._device_list:
+                cls._device_list.remove(serial_device)
 
         # Disconnect port.
-        try:
-            wsg_device.port_handler.close()
-        except RuntimeError as error:
-            logging.error("Could not close serial port %s: %s",
-                          wsg_device.name, error)
-            wsg_device.fire_event(WsgEventType.ERROR_CLOSING_PORT, [error])
-            wsg_device.connection_status = ConnectionStatus.CONNECTION_LOST
-            return
+        serial_device.port_handler.close()
 
         # Notify disconnection.
-        wsg_device.connection_status = ConnectionStatus.DISCONNECTED
-        wsg_device.fire_event(WsgEventType.DISCONNECTED)
+        serial_device.connection_status = ConnectionStatus.DISCONNECTED
+        serial_device.fire_event(SerialEventType.DISCONNECTED)
 
-        # Stop WSG thread if no device is listed for pooling.
+        # Stop communiation thread if no device is listed for pooling.
         with cls._lock:
             if len(cls._device_list) == 0:
-                cls._stop_wsg_data_loop.set()
+                cls._stop_serial_data_loop.set()
                 cls._is_data_task_running = False
 
     @classmethod
-    def make_frame(cls, payload: bytearray) -> bytearray:
-        """Creates a frame to be sent to WSG gripper.
-
-        :param payload: data to be sent
-        :type payload: bytearray
-        :return: frame to sent over TCP.
-        :rtype: bytearray
-        """
-        # Prepare header.
-        frame = bytearray()
-        frame += TRANSACTION_ID
-        frame += PROTOCOL_ID
-        payload_size = len(payload)
-        frame.append(payload_size & 0xFF)
-        frame.append((payload_size & 0xFF00) >> 8)
-
-        # Calculate CRC.
-        crc = Crc16Generator.checksum_update_crc16(frame)
-        crc = Crc16Generator.checksum_update_crc16(payload, crc)
-
-        # Add Payload.
-        frame += payload
-
-        # Add CRC.
-        frame.append(crc & 0xFF)
-        frame.append((crc & 0xFF00) >> 8)
-        return frame
-
-    @staticmethod
-    def decode_frame(frame: bytes) -> bytearray:
-        """Decodes incoming frame from WSG gripper.
-
-        :param frame: Frame to decode
-        :type frame: bytes
-        :return: payload of the frame or None
-        :rtype: bytearray
-        """
-        if len(frame) < RESPONSE_MIN_LENGTH:
-            return None
-
-        tid = frame[:2]
-        if tid != TRANSACTION_ID:
-            return None
-
-        pid = frame[2:4]
-        if pid != PROTOCOL_ID:
-            return None
-
-        payload_size = frame[4] | (frame[5] << 8)
-        payload = bytearray()
-        for index in range(payload_size):
-            payload.append(frame[index+6])
-        return payload
-
-    @staticmethod
-    def to_taxel_array(payload: bytearray, taxel_array_size: tuple) -> np.array:
-        """Convert payload coming from WSG gripper into valid sensor array data.
-
-        :param payload: data to be converted
-        :type payload: bytearray
-        :param taxel_array_size: size of the taxel array
-        :type taxel_array_size: tuple
-        :return: data converted into sensor data
-        :rtype: np.array
-        """
-        taxel_array = np.zeros(shape=taxel_array_size, dtype=int)
-        max_row = taxel_array_size[0]
-        max_column = taxel_array_size[1]
+    def _to_taxel_array(cls, taxels_array_size: tuple, payload: bytearray) -> np.array:
+        taxel_array = np.zeros(shape=taxels_array_size, dtype=int)
+        max_row = taxels_array_size[0]
+        max_column = taxels_array_size[1]
         for row in range(max_row):
             for column in range(max_column):
+                # Calculate the index inside payload.
                 index = (2 * row * max_column) + (2 * column)
-                value = int(payload[index] | (
-                    payload[index + 1] << 8))
+                # Build the taxel value.
+                value = int(payload[index + 1] * 256 + payload[index])
+                # Add it to the list.
                 taxel_array[row, column] = value
         return taxel_array
 
     @classmethod
-    def _wsg_data_task(cls):
-        """Task for handling packages from WSG gripper. 
-        """
-        logging.debug('WSG data task initialized')
+    def _process_frame(cls, serial_device: SerialDevice, frames: list[bytes]):
+        for frame in frames:
+            data, frame_type, _ = get_data(frame)
 
-        # Iterate until signal is sent.
-        while not cls._stop_wsg_data_loop.is_set():
+            # Reply ACK with another ACK
+            if frame_type == FRAME_ACK:
+                reply = frame_data('', FRAME_ACK, 5)
+                serial_device.port_handler.write(reply)
+                serial_device.status = SerialDeviceStatus.IDLE
+                serial_device.timeout_count = 0
+                return
+            # Ignore non-valid packages.
+            elif frame_type == FRAME_DATA and len(data) == SERIAL_DATA_FRAME_SIZE:
+                serial_device.taxels_array = cls._to_taxel_array(
+                    serial_device.taxels_array_size, data)
+            else:
+                cls._logger.warning(
+                    'Received payload with wrong size. Ignoring package.')
+
+    @classmethod
+    def _poll_for_incoming_data(cls, serial_device: SerialDevice) -> list[bytes]:
+        """Process all the data comming from serial port. Filters the
+        data into HDLC frames.
+
+        :param serial_device: Device to get the data from.
+        :type serial_device: SerialDevice
+        :return: Incomming HDLC frame, None otherwise.
+        :rtype: bytes
+        """
+        # Read data when there is a package available
+        if serial_device.port_handler.in_waiting < MIN_PACKAGE_SIZE:
+            return None
+
+        # Read all the data available from serial port
+        serial_data = serial_device.port_handler.read_all()
+
+        result = []
+        # Find the start of the frame
+        start_index = serial_data.find(FRAME_START_BYTE)
+        if start_index == -1:
+            # There is no starting frame, ignore package.
+            return None
+        elif start_index != 0:
+            # Erase all the bytes that are before the start of the package
+            serial_data = serial_data[start_index:]
+
+        # If there are two consecutive start frames (end of one frame and start of the next one).
+        # Remove the end frame
+        if len(serial_data) != 1 and serial_data[1] == FRAME_START_BYTE:
+            serial_data.pop(0)
+
+        start_frame_index = 0
+        end_frame_index = 0
+        while len(serial_data) != end_frame_index:
+            # Find the end of the frame. Ignore the start frame
+            end_frame_index = serial_data.find(
+                FRAME_END_BYTE, start_frame_index + 1)
+            if end_frame_index == -1:
+                # There is starting frame but there is no end frame. Wait for the rest
+                # of the data
+                return None
+            # There is a complete frame detected. create a new byte array with the frame.
+            # Increment the end frame index to include the end frame byte.
+            end_frame_index += 1
+            new_frame = bytes(serial_data[start_frame_index:end_frame_index])
+            # Set the start index of the next frame.
+            start_frame_index = end_frame_index
+            # Check if address is correct
+            if new_frame[1] == DEVICE_ADDRESS[0]:
+                result.append(new_frame)
+        return result
+
+    @classmethod
+    def _serial_data_task(cls):
+        """Task for handling packages from Serial Touch Detect.
+        """
+        logging.debug('Serial data task initialized')
+
+        # Iterate until signal is set.
+        while not cls._stop_serial_data_loop.is_set():
             with cls._lock:
                 # Iterate through devices.
                 for device in cls._device_list:
                     try:
-                        # Calculate biggest frame.
-                        n_bytes = device.taxels_array_size[0] * \
-                            device.taxels_array_size[1] * 2
-                        n_bytes += len(TRANSACTION_ID)
-                        n_bytes += len(PROTOCOL_ID)
-                        n_bytes += 4
+                        if device.status == SerialDeviceStatus.IDLE:
+                            data_request_frame = frame_data(
+                                SERIAL_COMMAND_GET_DATA, FRAME_DATA, 1)
+                            device.port_handler.write(data_request_frame)
+                            device.status = SerialDeviceStatus.REQUEST_SENT
+                            device.timeout_count = 0
+                        elif device.status == SerialDeviceStatus.REQUEST_SENT:
+                            # get new frame
+                            new_data = cls._poll_for_incoming_data(device)
+                            # If no data is available, then wait another iteration
+                            if not new_data:
+                                device.timeout_count += UPDATE_RATE
+                                # Check if the device is in timeout.
+                                if device.timeout_count >= TIMEOUT:
+                                    device.timeout_count += 1
+                                    # Disconnect if MAX_TIMOUT_COUNT is reached.
+                                    if device.timeout_count >= MAX_TIMEOUT_COUNT:
+                                        device.status = SerialDeviceStatus.IDLE
+                                        cls.disconnect(device)
+                                continue
+                            cls._process_frame(device, new_data)
+                            device.fire_event(SerialEventType.NEW_DATA, [
+                                              device.taxels_array])
 
-                        # Read left sensor
-                        frame = cls.make_frame(READ_LEFT_SENSOR_COMMAND)
-                        device.port_handler.send(frame)
-                        data = device.port_handler.recv(n_bytes)
-                        if not data:
-                            continue
-                        payload = cls.decode_frame(data)
-                        if not payload:
-                            continue
-                        device.taxel_array_left = cls.to_taxel_array(
-                            payload, device.taxels_array_size)
-
-                        # Read right sensor
-                        frame = cls.make_frame(READ_RIGHT_SENSOR_COMMAND)
-                        device.port_handler.send(frame)
-                        data = device.port_handler.recv(n_bytes)
-                        if not data:
-                            continue
-                        payload = cls.decode_frame(data)
-                        if not payload:
-                            continue
-                        device.taxel_array_right = cls.to_taxel_array(
-                            payload, device.taxels_array_size)
-                        device.fire_event(WsgEventType.NEW_DATA, [
-                            device.taxel_array_left, device.taxel_array_right])
                     except (RuntimeError, ConnectionAbortedError):
                         logging.error(
                             'Error getting data from gripper. Disconnecting device')
                         cls.disconnect(device)
                         continue
             time.sleep(UPDATE_RATE)
-
-        logging.debug('WSG data task finished')
+        logging.debug('Serial data task finished')

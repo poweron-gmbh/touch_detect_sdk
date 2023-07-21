@@ -28,7 +28,7 @@ EXIT_FAILURE = 1
 # Amount of samples to take from device.
 N_SAMPLES = 1000
 # Device port to connect.
-SERIAL_PORT = 'COM27'
+SERIAL_PORT = 'COM26'
 
 # Update rate to request new data.
 UPDATE_RATE_SEC = 0.001
@@ -50,7 +50,7 @@ DEFAULT_TIMOUT_SEC = 0.5
 START_FRAME = bytes(b'\x7e')
 DEVICE_ADDRESS = bytes(b'\xff')
 CONTROL = bytes(b'\x12')
-COMMAND_GET_DATA = bytes(b'\x01')
+COMMAND_GET_DATA = bytes(b'\x01') 
 END_FRAME = bytes(b'\x7e')
 
 

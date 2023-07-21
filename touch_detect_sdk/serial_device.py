@@ -3,14 +3,8 @@
 """Describes a serial touch detect Device"""
 
 from enum import Enum, unique
-import logging
-import socket
-import threading
 
-import numpy as np
 import serial  # pyserial
-from serial.tools.list_ports import comports
-from serial import serialutil
 
 from .event import Event
 from .touch_detect_device import TouchDetectDevice, TouchDetectType
@@ -27,11 +21,18 @@ DEFAULT_TIMOUT_SEC = 0.5
 class SerialEventType(Enum):
     """Represents different type of events triggered by Serial touch detect.
     """
-    ERROR_CLOSING_PORT = 1
     ERROR_OPENING_PORT = 2
     CONNECTED = 3
     DISCONNECTED = 4
     NEW_DATA = 5
+
+
+@unique
+class SerialDeviceStatus(Enum):
+    """Represents different type of events triggered by Serial touch detect.
+    """
+    IDLE = 0
+    REQUEST_SENT = 1
 
 
 class SerialEventData():
@@ -69,6 +70,12 @@ class SerialDevice(TouchDetectDevice):
         """
         super().__init__(address, name, TouchDetectType.SERIAL, taxels_array_size)
 
+        # Public variables
+        # Amount of connections performed that failed.
+        self.timeout_count = 0
+        # Status of the communication with the device.
+        self.status = SerialDeviceStatus.IDLE
+
         # Private variables
         self._port_handler = serial.Serial()
         self._port_handler.port = address
@@ -77,8 +84,6 @@ class SerialDevice(TouchDetectDevice):
         self._port_handler.stopbits = STOP_BITS
         self._port_handler.bytesize = BYTE_SIZE
         self._port_handler.timeout = DEFAULT_TIMOUT_SEC
-        # Lock for sharing variables across different threads.
-        self._lock = threading.Lock()
 
     @property
     def port_handler(self) -> serial.Serial:

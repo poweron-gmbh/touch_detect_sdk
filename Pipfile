@@ -8,6 +8,8 @@ bleak = "*"
 numpy = "*"
 future = "*"
 pyserial = "*"
+python4yahdlc = "*"
+keyboard = "*"
 
 [dev-packages]
 pytest = "*"
