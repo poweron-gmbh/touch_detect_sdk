@@ -7,18 +7,22 @@
   - [About](#about)
   - [Project structure](#project-structure)
   - [Prerequisites](#prerequisites)
-  - [Initialize the environment](#initialize-the-environment)
   - [Run the demos](#run-the-demos)
   - [Test the library](#test-the-library)
-  - [Documentation](#documentation)
 
 ## About
 
-This software development kit (SDK) handles the communication to Touch Detect devices. It supports BLE and CAN devices.
+This software development kit (SDK) handles the communication to Touch Detect devices. It supports:
+
+- [BLE TouchDetect](docs\ble_touch_detect.md)
+- [CAN TouchDetect](docs\can_touch_detect.md)
+- [Serial TouchDetect](docs\serial_touch_detect.md)
+- [WSG TouchDetect](docs\wsg_touch_detect.md)
+
 
 ## Project structure
 
-- demo: simple individual examples to show how the library works.
+- demo: simple examples that show how each library works.
 - docs: documentation about the SDK.
 - resources: files and documents required by the project.
 - src: source code of the app.
@@ -38,7 +42,7 @@ This software development kit (SDK) handles the communication to Touch Detect de
   pip install pipenv
   ```
 
-## Initialize the environment
+## Run the demos
 
 - It is strongly suggested to use pipenv. This tool isolates the execution of the code and provides all the necessary dependencies to make it work. This repo provides a **pipenv** ready to use. To activate the environment, simply run:
 
@@ -47,9 +51,7 @@ This software development kit (SDK) handles the communication to Touch Detect de
     pipenv shell
   ```
 
-## Run the demos
-
-There are a set of demos under [demo](demo) folder. To run the demos run the following snippet:
+- There are a set of demos under [demo](demo) folder. To run the demos run the following snippet:
 
   ```bash
     # Place yourself inside the root folder
@@ -76,8 +78,6 @@ There are also tests implemented for checking the correct behaviour of the libra
     pytest.exe .\test
   ```
 
-- To run a specific test, run:
-
 ## Use the SDK in your project
 
 To use this library:
@@ -95,8 +95,4 @@ To use this library:
   from ble_touchdetect_sdk import BleTouchSdk
   ```
 
-- Start using the SDK.
-
-## Documentation
-
-Detailed documentation of this project can be found [here](docs)
+- Use the SDK. Follow [the demo examples](demo).
