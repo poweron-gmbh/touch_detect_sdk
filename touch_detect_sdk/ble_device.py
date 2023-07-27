@@ -17,6 +17,7 @@ from bleak.exc import BleakDeviceNotFoundError
 
 from .event import Event
 from .touch_detect_device import ConnectionStatus, TouchDetectDevice, TouchDetectType
+from .touch_detect_utils import TouchDetectUtils
 
 
 # Size of the Frame
@@ -105,7 +106,8 @@ class BleDevice(TouchDetectDevice):
         """Notification handler which updates the data received from device.
         """
         # Convert data into valid taxel data.
-        array_data = self._to_taxel_array(data)
+        array_data = TouchDetectUtils.to_taxel_array(
+            self.taxels_array_size, data)
         # Fire event only if conversion was successful.
         if len(array_data) != 0:
             self.fire_event(BleEventType.NEW_DATA, [array_data])
@@ -153,29 +155,3 @@ class BleDevice(TouchDetectDevice):
         # Fire event for disconnection.
         self.connection_status = ConnectionStatus.DISCONNECTED
         self.fire_event(BleEventType.DISCONNECTED)
-
-    def _to_taxel_array(self, payload: bytearray) -> np.array:
-        """Convert payload coming from BLE gripper into valid sensor array data.
-
-        :param payload: data to be converted
-        :type payload: bytearray
-        :return: data converted into sensor data or empty array if no data is available.
-        :rtype: np.array
-        """
-        if len(payload) != BLE_FRAME_SIZE:
-            self._logger.warning(
-                'Received payload with wrong size. Ignoring package.')
-            return bytearray()
-
-        taxel_array = np.zeros(shape=self.taxels_array_size, dtype=int)
-        max_row = self.taxels_array_size[0]
-        max_column = self.taxels_array_size[1]
-        for row in range(max_row):
-            for column in range(max_column):
-                # Calculate the index inside payload.
-                index = (2 * row * max_column) + (2 * column)
-                # Build the taxel value.
-                value = int(payload[index] * 256 + payload[index + 1])
-                # Add it to the list.
-                taxel_array[row, column] = value
-        return taxel_array

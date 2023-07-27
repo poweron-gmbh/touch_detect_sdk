@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-"""Describes a CAN Device"""
+"""Describes a device connected to WSG gripper"""
 
 from enum import Enum, unique
 import socket
@@ -9,14 +9,13 @@ import numpy as np
 from .event import Event
 from .touch_detect_device import TouchDetectDevice, TouchDetectType
 
-# Default values for serial port.
+# Default port for WSG connection.
 TCP_PORT = 1000
-
 
 
 @unique
 class WsgEventType(Enum):
-    """Represents different type of events triggered by CAN touch detect.
+    """Represents different type of events triggered by WSG touch detect.
     """
     ERROR_CLOSING_PORT = 1
     ERROR_OPENING_PORT = 2
@@ -42,14 +41,14 @@ class WsgEventData():
 
 
 class WsgDevice(TouchDetectDevice):
-    """Represents a CAN device.
+    """Represents a WSG device.
     """
     # Event object
     events = Event('')
 
     def __init__(self, address: str, name: str = None,
                  taxels_array_size: tuple = (6, 6)):
-        """Initialize CAN object.
+        """Initialize WSG object.
 
         :param address: Address of the device
         :type address: str
@@ -90,7 +89,7 @@ class WsgDevice(TouchDetectDevice):
         :type data: np.array
         """
         with self._lock:
-            self._taxels_array_left= data
+            self._taxels_array_left = data
 
     @property
     def taxels_array_right(self) -> socket.socket:
@@ -107,7 +106,7 @@ class WsgDevice(TouchDetectDevice):
         :type data: np.array
         """
         with self._lock:
-            self._taxels_array_right= data
+            self._taxels_array_right = data
 
     def fire_event(self, event_type: WsgEventType, event_data: list = None):
         """Fires the event of the class.
