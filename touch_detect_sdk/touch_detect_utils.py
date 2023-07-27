@@ -1,6 +1,9 @@
 #!/usr/bin/env python3
 
-"""Class for calculating CRC16 checksum."""
+"""Set of utils for touch detect SDK
+"""
+
+import numpy as np
 
 # Polynomial table for CRC16 calculation.
 CRC_TABLE_CCITT16 = [
@@ -38,10 +41,40 @@ CRC_TABLE_CCITT16 = [
     0x6e17, 0x7e36, 0x4e55, 0x5e74, 0x2e93, 0x3eb2, 0x0ed1, 0x1ef0
 ]
 
-
-class Crc16Generator():
-    """This library generates CRC16 checksum calculation.
+class TouchDetectUtils():
+    """Set of utils for touch detect SDK
     """
+
+    @classmethod
+    def to_taxel_array(cls, taxels_array_size: tuple, data: bytes) -> np.array:
+        """ Convert raw data from sensor array into a valid taxel array.
+
+        :param taxels_array_size: Size of the sensor array.
+        :type taxels_array_size: tuple
+        :param data: raw data to process.
+        :type data: bytes
+        :return: numpy array with the data from sensor array processed.
+        :rtype: np.array
+        """
+        max_row = taxels_array_size[0]
+        max_column = taxels_array_size[1]
+
+        # Check if there is enough data to process.
+        if len(data) != (max_row * max_column * 2):
+            return None
+
+        # Create the array.
+        taxel_array = np.zeros(shape=taxels_array_size, dtype=int)
+        # Process the data.
+        for row in range(max_row):
+            for column in range(max_column):
+                # Calculate the index inside data.
+                index = (2 * row * max_column) + (2 * column)
+                # Build the taxel value.
+                value = int(data[index + 1] * 256 + data[index])
+                # Add it to the list.
+                taxel_array[row, column] = value
+        return taxel_array
 
     @classmethod
     def checksum_update_crc16(cls, data: bytearray, init_value: int = 0xFFFF) -> int:

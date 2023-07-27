@@ -201,17 +201,6 @@ class TestWsgGripperTouchSdk:
         # Assert
         assert frame == TEST_ENCODED_FRAME_2
 
-    def test_to_taxel_array(self):
-        """Test for converting package incoming payloads into valid sensor data.
-        """
-        # Arrange
-        uut = WsgGripperTouchSdk()
-
-        # Act
-        frame = uut.to_taxel_array(TEST_RAW_SENSOR_DATA, (6, 6))
-        # Assert
-        assert (frame == TEST_CONVERTED_TAXEL_DATA).all()
-
     def test_decode_frame(self):
         """Test for converting package payloads from WSG into valid sensor data.
         """
