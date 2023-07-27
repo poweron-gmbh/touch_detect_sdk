@@ -6,19 +6,20 @@ import logging
 import time
 from threading import Event, Lock, Thread
 
-import numpy as np
-
 from serial.serialutil import SerialException
 
+# pylint: disable=no-name-in-module
 from yahdlc import (
     FRAME_ACK,
     FRAME_DATA,
     frame_data,
     get_data,
 )
+# pylint: enable=no-name-in-module
 
 from .serial_device import SerialDevice, SerialEventType, SerialDeviceStatus
 from .touch_detect_device import ConnectionStatus
+from .touch_detect_utils import TouchDetectUtils
 
 # Update rate of the data of all the sensors in seconds.
 TIMEOUT = 0.8
@@ -166,21 +167,6 @@ class SerialTouchSdk:
                 cls._is_data_task_running = False
 
     @classmethod
-    def _to_taxel_array(cls, taxels_array_size: tuple, payload: bytearray) -> np.array:
-        taxel_array = np.zeros(shape=taxels_array_size, dtype=int)
-        max_row = taxels_array_size[0]
-        max_column = taxels_array_size[1]
-        for row in range(max_row):
-            for column in range(max_column):
-                # Calculate the index inside payload.
-                index = (2 * row * max_column) + (2 * column)
-                # Build the taxel value.
-                value = int(payload[index + 1] * 256 + payload[index])
-                # Add it to the list.
-                taxel_array[row, column] = value
-        return taxel_array
-
-    @classmethod
     def _process_frame(cls, serial_device: SerialDevice, frames: list[bytes]):
         for frame in frames:
             data, frame_type, _ = get_data(frame)
@@ -194,7 +180,7 @@ class SerialTouchSdk:
                 return
             # Ignore non-valid packages.
             elif frame_type == FRAME_DATA and len(data) == SERIAL_DATA_FRAME_SIZE:
-                serial_device.taxels_array = cls._to_taxel_array(
+                serial_device.taxels_array = TouchDetectUtils.to_taxel_array(
                     serial_device.taxels_array_size, data)
             else:
                 cls._logger.warning(
