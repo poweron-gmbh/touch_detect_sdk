@@ -33,7 +33,7 @@ Reffer to [README.md](README.md) to get a list of the requisites to use this lib
 
   ```bash
     # Start the demo.
-    py.exe .\demo\ble_demo.py
+    python.exe .\demo\ble_demo.py
   ```
 
   The script will search for BLE devices and will connect to the device with the name **BLE_DEVICE_NAME**. Once the connection was stablished, it will publish in the console the ADC value of each taxel node.

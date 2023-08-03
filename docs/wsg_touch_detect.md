@@ -37,7 +37,7 @@ This section explains how to use WSG TouchDetect SDK to gather data from 2 Touch
 
   ```bash
     # Start the demo
-    py.exe .\demo\wsg_demo.py
+    python.exe .\demo\wsg_demo.py
   ```
 
   After running this, the demo will connect to the gripper and start plotting the message `New data received` every time a new package arrives.

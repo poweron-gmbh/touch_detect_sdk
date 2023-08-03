@@ -7,5 +7,5 @@ setup(
     author='Gonzalo Cervetti',
     author_email='gonzalo@poweron.one',
     packages=['touch_detect_sdk'],
-    install_requires=['bleak', 'numpy', 'future', 'pyserial']
+    install_requires=['bleak', 'numpy', 'future', 'pyserial', 'pynput', 'python4yahdlc']
 )
