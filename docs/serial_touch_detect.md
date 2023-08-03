@@ -16,6 +16,15 @@ This section explains how to use PowerON TouchDetect SDK to connect to sensors o
 
 Reffer to [README.md](README.md) to get a list of the requisites to use this library.
 
+- Check which port belongs to the development board:
+  - Open Device manager:
+
+     ![device manager](img/device_manager_1.png)
+
+  - In the **Ports** TouchDetect can be found. In this case, port is **COM28**:
+
+     ![device manager 2](img/device_manager_2.png)
+
 ## Run the demo
 
 - Make sure that you follow **Prerequisites** in order to run the library.
@@ -33,7 +42,7 @@ Reffer to [README.md](README.md) to get a list of the requisites to use this lib
 
   ```bash
     # Start the demo
-    py.exe .\demo\ble_demo.py
+    python.exe .\demo\ble_demo.py
   ```
 
   The script will connect to the device with the name **SERIAL_PORT**. Once the connection was stablished, it will publish in the console the ADC value of each taxel node.

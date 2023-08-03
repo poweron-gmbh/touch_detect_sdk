@@ -51,6 +51,13 @@ This software development kit (SDK) handles the communication to Touch Detect de
     pipenv shell
   ```
 
+- If it is your **FIRST TIME** using this library, install the dependencies in the environment by running:
+
+  ```bash
+    # Install dependencies required by this library
+    pipenv install
+  ```
+
 - There are a set of demos under [demo](demo) folder. To run the demos run the following snippet:
 
   ```bash
@@ -58,7 +65,7 @@ This software development kit (SDK) handles the communication to Touch Detect de
     cd poweron-touchdetect-sdk
 
     # Run one of the demos
-    py.exe .\demo\DEMO_NAME.py
+    python.exe .\demo\DEMO_NAME.py
   ```
 
 ## Test the library
