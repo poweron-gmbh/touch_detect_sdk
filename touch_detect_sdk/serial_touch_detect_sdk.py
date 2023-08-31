@@ -24,7 +24,7 @@ from .touch_detect_utils import TouchDetectUtils
 # Update rate of the data of all the sensors in seconds.
 TIMEOUT = 0.8
 MAX_TIMEOUT_COUNT = 3
-UPDATE_RATE = 0.025
+UPDATE_RATE = 0.040
 MIN_PACKAGE_SIZE = 6
 
 SERIAL_DATA_FRAME_SIZE = 72
