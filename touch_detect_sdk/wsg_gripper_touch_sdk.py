@@ -222,7 +222,7 @@ class WsgGripperTouchSdk:
 
     @classmethod
     def _wsg_data_task(cls):
-        """Task for handling packages from WSG gripper. 
+        """Task for handling packages from WSG gripper.
         """
         logging.debug('WSG data task initialized')
 
@@ -248,8 +248,9 @@ class WsgGripperTouchSdk:
                         payload = cls.decode_frame(data)
                         if not payload:
                             continue
-                        device.taxel_array_left = TouchDetectUtils.to_taxel_array(device.taxels_array_size,
-                                                                                  payload)
+                        device.taxel_array_left = \
+                            TouchDetectUtils.to_taxel_array(
+                                device.taxels_array_size, payload)
 
                         # Read right sensor
                         frame = cls.make_frame(READ_RIGHT_SENSOR_COMMAND)
@@ -260,13 +261,15 @@ class WsgGripperTouchSdk:
                         payload = cls.decode_frame(data)
                         if not payload:
                             continue
-                        device.taxel_array_right = TouchDetectUtils.to_taxel_array(device.taxels_array_size,
-                                                                                   payload)
+                        device.taxel_array_right = \
+                            TouchDetectUtils.to_taxel_array(
+                                device.taxels_array_size, payload)
                         device.fire_event(WsgEventType.NEW_DATA, [
                             device.taxel_array_left, device.taxel_array_right])
                     except (RuntimeError, ConnectionAbortedError):
                         logging.error(
-                            'Error getting data from gripper. Disconnecting device')
+                            '''Error getting data from gripper.
+                            Disconnecting device''')
                         cls.disconnect(device)
                         continue
             time.sleep(UPDATE_RATE)

@@ -8,9 +8,11 @@ import sys
 import time
 
 # This allows demo.py see modules that are one level up.
-sys.path.append(os.getcwd())  # noqa
-from touch_detect_sdk.can_touch_sdk import CanTouchSdk
-from touch_detect_sdk.can_device import CanEventData, CanEventType
+sys.path.append(os.getcwd())
+# pylint: disable=wrong-import-position
+from touch_detect_sdk.can_touch_sdk import CanTouchSdk  # noqa
+from touch_detect_sdk.can_device import CanEventData, CanEventType  # noqa
+# pylint: enable=wrong-import-position
 
 # Possible returning values of the script.
 EXIT_SUCCESS = 0
@@ -24,6 +26,8 @@ CAN_DEVICE_NAME = 'COM18'
 
 
 def event_handler(sender: object, event_data: CanEventData):
+    """This function is called when a new event is raised by the device.
+    """
     # Filter events only from one sensor.
     if sender.address == CAN_DEVICE_NAME:
         if event_data.type == CanEventType.CONNECTED:
@@ -38,6 +42,8 @@ def event_handler(sender: object, event_data: CanEventData):
 
 
 def main():
+    """Main function of the demo.
+    """
     # Create new instance of CanTouchSDK.
     can_touch_detect = CanTouchSdk()
 
@@ -49,7 +55,8 @@ def main():
     # Print devices found.
     for device in devices:
         print('found device in port ' + device.address)
-        # If device matches with the device we want to connect, then we store the device name
+        # If device matches with the device we want to connect, then
+        # we store the device name
         if device.address == CAN_DEVICE_NAME:
             device_to_connect = device
     if len(devices) == 0:

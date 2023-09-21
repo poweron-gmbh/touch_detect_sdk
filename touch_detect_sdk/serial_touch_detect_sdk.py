@@ -179,7 +179,8 @@ class SerialTouchSdk:
                 serial_device.timeout_count = 0
                 return
             # Ignore non-valid packages.
-            elif frame_type == FRAME_DATA and len(data) == SERIAL_DATA_FRAME_SIZE:
+            elif (frame_type == FRAME_DATA and
+                    len(data) == SERIAL_DATA_FRAME_SIZE):
                 serial_device.taxels_array = TouchDetectUtils.to_taxel_array(
                     serial_device.taxels_array_size, data)
             else:
@@ -187,7 +188,8 @@ class SerialTouchSdk:
                     'Received payload with wrong size. Ignoring package.')
 
     @classmethod
-    def _poll_for_incoming_data(cls, serial_device: SerialDevice) -> list[bytes]:
+    def _poll_for_incoming_data(cls,
+                                serial_device: SerialDevice) -> list[bytes]:
         """Process all the data comming from serial port. Filters the
         data into HDLC frames.
 
@@ -213,7 +215,8 @@ class SerialTouchSdk:
             # Erase all the bytes that are before the start of the package
             serial_data = serial_data[start_index:]
 
-        # If there are two consecutive start frames (end of one frame and start of the next one).
+        # If there are two consecutive start frames (end of one frame and
+        # start of the next one).
         # Remove the end frame
         if len(serial_data) != 1 and serial_data[1] == FRAME_START_BYTE:
             serial_data.pop(0)
@@ -225,11 +228,12 @@ class SerialTouchSdk:
             end_frame_index = serial_data.find(
                 FRAME_END_BYTE, start_frame_index + 1)
             if end_frame_index == -1:
-                # There is starting frame but there is no end frame. Wait for the rest
-                # of the data
+                # There is starting frame but there is no end frame.
+                # Wait for the restof the data.
                 return None
-            # There is a complete frame detected. create a new byte array with the frame.
-            # Increment the end frame index to include the end frame byte.
+            # There is a complete frame detected. create a new byte
+            # array with the frame. Increment the end frame index
+            # to include the end frame byte.
             end_frame_index += 1
             new_frame = bytes(serial_data[start_frame_index:end_frame_index])
             # Set the start index of the next frame.
@@ -260,14 +264,17 @@ class SerialTouchSdk:
                         elif device.status == SerialDeviceStatus.REQUEST_SENT:
                             # get new frame
                             new_data = cls._poll_for_incoming_data(device)
-                            # If no data is available, then wait another iteration
+                            # If no data is available,
+                            # then wait another iteration.
                             if not new_data:
                                 device.timeout_count += UPDATE_RATE
                                 # Check if the device is in timeout.
                                 if device.timeout_count >= TIMEOUT:
                                     device.timeout_count += 1
-                                    # Disconnect if MAX_TIMOUT_COUNT is reached.
-                                    if device.timeout_count >= MAX_TIMEOUT_COUNT:
+                                    # Disconnect if MAX_TIMOUT_COUNT is
+                                    # reached.
+                                    if (device.timeout_count >=
+                                            MAX_TIMEOUT_COUNT):
                                         device.status = SerialDeviceStatus.IDLE
                                         cls.disconnect(device)
                                 continue
@@ -277,7 +284,8 @@ class SerialTouchSdk:
 
                     except (RuntimeError, ConnectionAbortedError):
                         logging.error(
-                            'Error getting data from gripper. Disconnecting device')
+                            '''Error getting data from gripper.
+                            Disconnecting device''')
                         cls.disconnect(device)
                         continue
             time.sleep(UPDATE_RATE)

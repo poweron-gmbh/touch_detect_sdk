@@ -6,9 +6,7 @@ import asyncio
 import copy
 import logging
 import threading
-import time
 
-from enum import Enum, unique
 from threading import Event, Thread
 
 import numpy as np
@@ -148,7 +146,8 @@ class CanFrameDecoder:
 
 
 class CanTouchSdk:
-    """This Class manages the communication with CAN devices over RS232 USB Adapter.
+    """This Class manages the communication with CAN devices over
+    RS232 USB Adapter.
     """
 
     @classmethod
@@ -294,7 +293,7 @@ class CanTouchSdk:
 
         :param port: Serial Port to read
         :type port: serial.Serial
-        :raises serialutil.SerialTimeoutException: if failed to read data from device.
+        :raises serialutil.SerialTimeoutException: if failed to read data.
         :return: package in byte format or None if there was a problem.
         :rtype: bytes
         """
@@ -338,8 +337,8 @@ class CanTouchSdk:
                     if not frame:
                         continue
                 except serialutil.SerialTimeoutException:
-                    logging.error(
-                        'Error reading data from serial port. Disconnecting port')
+                    logging.error('''Error reading data from serial
+                         port. Disconnecting port''')
                     cls.disconnect(device)
                     device.connection_status = ConnectionStatus.CONNECTION_LOST
                     continue

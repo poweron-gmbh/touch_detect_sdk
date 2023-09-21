@@ -41,6 +41,7 @@ CRC_TABLE_CCITT16 = [
     0x6e17, 0x7e36, 0x4e55, 0x5e74, 0x2e93, 0x3eb2, 0x0ed1, 0x1ef0
 ]
 
+
 class TouchDetectUtils():
     """Set of utils for touch detect SDK
     """
@@ -77,7 +78,8 @@ class TouchDetectUtils():
         return taxel_array
 
     @classmethod
-    def checksum_update_crc16(cls, data: bytearray, init_value: int = 0xFFFF) -> int:
+    def checksum_update_crc16(cls, data: bytearray,
+                              init_value: int = 0xFFFF) -> int:
         """Calculates CRC16 with 0x1021 polynomial representation.
 
         :param data: data being used to calculate CRC.

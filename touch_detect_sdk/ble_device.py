@@ -9,14 +9,13 @@ import time
 
 from enum import Enum, unique
 
-import numpy as np
-
 from bleak import BleakClient
 from bleak.backends.characteristic import BleakGATTCharacteristic
 from bleak.exc import BleakDeviceNotFoundError
 
 from .event import Event
-from .touch_detect_device import ConnectionStatus, TouchDetectDevice, TouchDetectType
+from .touch_detect_device import ConnectionStatus
+from .touch_detect_device import TouchDetectDevice, TouchDetectType
 from .touch_detect_utils import TouchDetectUtils
 
 
@@ -102,7 +101,8 @@ class BleDevice(TouchDetectDevice):
         event_data = BleEventInfo(event_type, event_data)
         self.events(event_data)
 
-    def notification_handler(self, _: BleakGATTCharacteristic, data: bytearray):
+    def notification_handler(self, _: BleakGATTCharacteristic,
+                             data: bytearray):
         """Notification handler which updates the data received from device.
         """
         # Convert data into valid taxel data.
