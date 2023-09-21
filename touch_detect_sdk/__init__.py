@@ -1,4 +1,5 @@
 # __init__.py
+"""Main module for the touch_detect_sdk package."""
 
 from .ble_device import BleDevice, BleEventType
 from .ble_touch_sdk import BleTouchSdk
@@ -10,3 +11,7 @@ from .event import EventHandler
 from .touch_detect_device import TouchDetectDevice
 from .touch_detect_device import TouchDetectType
 from .wsg_device import WsgDevice
+
+__all__ = ["BleDevice", "BleEventType", "BleTouchSdk",
+           "CanDevice", "CanEventData", "CanEventType", "CanTouchSdk", "Event",
+           "EventHandler", "TouchDetectDevice", "TouchDetectType", "WsgDevice"]

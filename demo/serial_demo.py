@@ -12,17 +12,19 @@ from threading import Event
 from pynput import keyboard
 
 # This allows demo.py see modules that are one level up.
-sys.path.append(os.getcwd())  # noqa
-from touch_detect_sdk.serial_device import SerialDevice, SerialEventType, SerialEventData
-from touch_detect_sdk.serial_touch_detect_sdk import SerialTouchSdk
-
+sys.path.append(os.getcwd())
+# pylint: disable=wrong-import-position
+from touch_detect_sdk.serial_touch_detect_sdk import SerialTouchSdk  # noqa
+from touch_detect_sdk.serial_device import SerialEventType, SerialEventData  # noqa
+from touch_detect_sdk.serial_device import SerialDevice  # noqa
+# pylint: enable=wrong-import-position
 
 # Possible returning values of the script.
 EXIT_SUCCESS = 0
 EXIT_FAILURE = 1
 
 # Device port to connect.
-SERIAL_PORT = 'COM26'
+SERIAL_PORT = 'COM38'
 
 # Update rate of the loop for handling the communication.
 LOOP_RATE_SEC = 0.010
@@ -31,6 +33,8 @@ stop_serial_data_loop = Event()
 stop_key_pressed = Event()
 
 # pylint: disable=global-variable-not-assigned
+
+
 def event_handler(_: object, event_info: SerialEventData):
     """This function can be suscribed to any Serial TouchDetect event
 
@@ -53,15 +57,18 @@ def event_handler(_: object, event_info: SerialEventData):
         print('New data: ')
         print(sensor_data)
 
+
 def on_key_pressed(key):
+    """This function is called when a key is pressed
+    """
     global stop_key_pressed
     try:
         if key == keyboard.Key.esc:
             stop_key_pressed.set()
 
     except AttributeError:
-        print('special key {0} pressed'.format(
-            key))
+        print(f'special key {key} pressed')
+
 
 def main():
     """Main function of the demo.
@@ -94,6 +101,7 @@ def main():
 
     return EXIT_SUCCESS
 # pylint: enable=global-variable-not-assigned
+
 
 if __name__ == '__main__':
     sys.exit(main())

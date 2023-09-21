@@ -43,7 +43,7 @@ class TouchDetectDevice(object):
         :type name: str, optional
         :param address: address of the device, defaults to None
         :type address: str, optional
-        :param touch_detect_type: type of device, defaults to TouchDetectType.VIRTUAL
+        :param touch_detect_type: type of device, defaults to VIRTUAL
         :type touch_detect_type: TouchDetectType, optional
         :param taxels_array_size: size of the sensor array, defaults to (6, 6)
         :type taxels_array_size: tuple, optional
@@ -127,7 +127,8 @@ class TouchDetectDevice(object):
         with self._lock:
             if self._taxels_array_size != data.shape:
                 logging.error(
-                    'Attempt to write touch_detect_device array with different size.')
+                    '''Attempt to write touch_detect_device array
+                     with different size.''')
                 return
             self._taxel_array = data
 

@@ -51,7 +51,8 @@ class CanDevice(TouchDetectDevice):
 
     def __init__(self, address: str, name: str = '',
                  taxels_array_size: tuple = (6, 6), baudrate: int = BAUDRATE,
-                 parity: str = PARITY, stop_bits: float = STOP_BITS, byte_size: int = BYTE_SIZE):
+                 parity: str = PARITY, stop_bits: float = STOP_BITS,
+                 byte_size: int = BYTE_SIZE):
         """Initialize CAN object.
 
         :param address: Address of the device
@@ -64,7 +65,7 @@ class CanDevice(TouchDetectDevice):
         :type baudrate: int, optional
         :param parity: Parity of the serial connection, defaults to PARITY
         :type parity: str, optional
-        :param stop_bits: amount of stopbits of the connection, defaults to STOP_BITS
+        :param stop_bits: stopbits of the connection, defaults to STOP_BITS
         :type stop_bits: float, optional
         :param byte_size: amount of bits per byte, defaults to BYTE_SIZE
         :type byte_size: int, optional
@@ -106,11 +107,11 @@ class CanDevice(TouchDetectDevice):
         with self._lock:
             self._data_buffer = data
 
-    def fire_event(self, type: CanEventType, event_data: list = None):
+    def fire_event(self, event_type: CanEventType, event_data: list = None):
         """Fires the event of the class.
 
         :param earg: parameters to send through the event, defaults to None
-        :type earg: object, optional
+        :event_type earg: object, optional
         """
-        event_data = CanEventData(type, event_data)
+        event_data = CanEventData(event_type, event_data)
         self.events(event_data)

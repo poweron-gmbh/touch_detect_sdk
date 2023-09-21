@@ -8,9 +8,11 @@ import sys
 import time
 
 # This allows demo.py see modules that are one level up.
-sys.path.append(os.getcwd())  # noqa
-from touch_detect_sdk.ble_touch_sdk import BleTouchSdk
-from touch_detect_sdk.ble_device import BleEventInfo, BleEventType
+sys.path.append(os.getcwd())
+# pylint: disable=wrong-import-position
+from touch_detect_sdk.ble_touch_sdk import BleTouchSdk  # noqa
+from touch_detect_sdk.ble_device import BleEventInfo, BleEventType  # noqa
+# pylint: enable=wrong-import-position
 
 # Possible returning values of the script.
 EXIT_SUCCESS = 0
@@ -31,7 +33,7 @@ def discovery_callback(devices: list):
     :param devices: List of devices found
     :type devices: list
     """
-    global DEVICE_QUEUE
+    global DEVICE_QUEUE  # pylint: disable=global-variable-not-assigned
 
     # Print devices found.
     for device in devices:
@@ -68,7 +70,9 @@ def event_handler(_: object, event_info: BleEventInfo):
 
 
 def main():
-    global DEVICE_QUEUE
+    """Main function of the demo.
+    """
+    global DEVICE_QUEUE  # pylint: disable=global-statement
     DEVICE_QUEUE = queue.Queue()
 
     # Create BLE Touch Detect.

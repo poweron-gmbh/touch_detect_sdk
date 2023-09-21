@@ -9,8 +9,10 @@ import sys
 import time
 
 sys.path.append(os.getcwd())  # noqa
+# pylint: disable=wrong-import-position
 from touch_detect_sdk.wsg_gripper_touch_sdk import WsgGripperTouchSdk  # noqa
 from touch_detect_sdk.wsg_device import WsgDevice, WsgEventType, WsgEventData  # noqa
+# pylint: enable=wrong-import-position
 
 # Possible returning values of the script.
 EXIT_SUCCESS = 0
@@ -46,6 +48,8 @@ class EventTester:
 
 
 def main():
+    """Main function of the demo.
+    """
     uut = WsgGripperTouchSdk()
     test_device = WsgDevice(WSG_IP, '')
     tester = EventTester()

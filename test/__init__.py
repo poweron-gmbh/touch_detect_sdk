@@ -1,4 +1,5 @@
 # __init__.py
+"""Module for the test package."""
 
 from .test_ble_device import TestBleDevice
 from .test_ble_touch_sdk import TestBleTouchSdk
@@ -9,3 +10,7 @@ from .test_event import TestEvent
 from .test_wsg_gripper_touch_sdk import TestWsgGripperTouchSdk
 from .test_touch_detect_device import TestTouchDetectDevice
 from .test_wsg_device import TestWsgDevice
+
+__all__ = ["TestBleDevice", "TestBleTouchSdk", "TestCanDevice",
+           "TestCanFrameDecoder", "TestCanTouchSdk", "TestEvent",
+           "TestWsgGripperTouchSdk", "TestTouchDetectDevice", "TestWsgDevice"]

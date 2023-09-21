@@ -29,7 +29,7 @@ class Publisher(object):
         self.event(earg)
 
 
-def handler_1(sender: object, earg : object):
+def handler_1(sender: object, earg: object):
     """ Handler for event
     """
     sender.handler_1_data += 1
@@ -161,8 +161,8 @@ class TestEvent:
         uut.event += handler_1
 
         # Act. Trigger the event from different threads.
-        Thread(target=(uut.fire_event())).start()
-        Thread(target=(uut.fire_event(TEST_MESSAGE))).start()
+        Thread(target=uut.fire_event()).start()
+        Thread(target=uut.fire_event(TEST_MESSAGE)).start()
 
         # Assert. The threads must be called in order.
         assert uut.handler_1_data == 2

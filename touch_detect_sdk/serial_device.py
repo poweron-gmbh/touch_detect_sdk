@@ -68,7 +68,8 @@ class SerialDevice(TouchDetectDevice):
         :param taxels_array_size: size of the array, defaults to (6, 6)
         :type taxels_array_size: tuple, optional
         """
-        super().__init__(address, name, TouchDetectType.SERIAL, taxels_array_size)
+        super().__init__(address, name, TouchDetectType.SERIAL,
+                         taxels_array_size)
 
         # Public variables
         # Amount of connections performed that failed.
