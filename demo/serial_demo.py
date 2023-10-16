@@ -34,7 +34,7 @@ LOOP_RATE_SEC = 0.010
 stop_serial_data_loop = Event()
 stop_key_pressed = Event()
 
-# pylint: disable=global-variable-not-assigned
+# pylint: disable=global-variable-not-assigned, too-few-public-methods
 
 
 class EventSuscriber(EventSuscriberInterface):
@@ -85,7 +85,7 @@ def main():
     """
     global stop_serial_data_loop
     global stop_key_pressed
-    
+
     serial_touch_detect = SerialTouchSdk()
     td_device = SerialDevice(SERIAL_PORT)
 
@@ -115,7 +115,7 @@ def main():
     print('Closing demo')
 
     return EXIT_SUCCESS
-# pylint: enable=global-variable-not-assigned
+# pylint: enable=global-variable-not-assigned, too-few-public-methods
 
 
 if __name__ == '__main__':

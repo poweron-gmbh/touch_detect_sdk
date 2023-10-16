@@ -53,9 +53,8 @@ class TestTouchDetectDevice:
         assert (default_touch_detect_device.taxels_array == np.zeros(
             shape=default_touch_detect_device.taxels_array_size)).all()
 
-    def test_modify_taxel_array(self,
-                                default_touch_detect_device,
-                                mocker: MockerFixture):
+    def test_modify_taxel_array_1(self, default_touch_detect_device,
+                                  mocker: MockerFixture):
         """Modify taxels with default array size.
         """
         # Arrange
@@ -76,9 +75,9 @@ class TestTouchDetectDevice:
             default_array_size
         assert (default_touch_detect_device.taxels_array == new_array).all()
 
-    def test_modify_taxel_array_different_size(self,
-                                               default_touch_detect_device,
-                                               mocker: MockerFixture):
+    def test_modify_taxel_array_size_2(self,
+                                       default_touch_detect_device,
+                                       mocker: MockerFixture):
         """Mofidy taxel values with different array size.
         """
         # Arrange

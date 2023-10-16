@@ -99,7 +99,7 @@ class WsgGripperTouchSdk:
         # Check if port was already opened.
         if wsg_device.connection_status == ConnectionStatus.CONNECTED:
             logging.info('Already connected to a device')
-            return
+            return None
 
         # Add device if wasn't already in the list.
         with cls._lock:
@@ -127,6 +127,8 @@ class WsgGripperTouchSdk:
             thread = Thread(target=cls._wsg_data_task)
             thread.start()
             cls._thread_list.append(thread)
+            return thread
+        return None
 
     @classmethod
     def _disconnect(cls, wsg_device: WsgDevice):

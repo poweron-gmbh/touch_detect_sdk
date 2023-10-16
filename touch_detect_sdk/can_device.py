@@ -51,8 +51,7 @@ class CanDevice(TouchDetectDevice):
 
     def __init__(self, address: str, name: str = '',
                  taxels_array_size: tuple = (6, 6), baudrate: int = BAUDRATE,
-                 parity: str = PARITY, stop_bits: float = STOP_BITS,
-                 byte_size: int = BYTE_SIZE):
+                 parity: str = PARITY, stop_bits: float = STOP_BITS):
         """Initialize CAN object.
 
         :param address: Address of the device
@@ -67,8 +66,6 @@ class CanDevice(TouchDetectDevice):
         :type parity: str, optional
         :param stop_bits: stopbits of the connection, defaults to STOP_BITS
         :type stop_bits: float, optional
-        :param byte_size: amount of bits per byte, defaults to BYTE_SIZE
-        :type byte_size: int, optional
         """
 
         super().__init__(address, name, TouchDetectType.CAN, taxels_array_size)
@@ -78,7 +75,7 @@ class CanDevice(TouchDetectDevice):
         self._port_handler.baudrate = baudrate
         self._port_handler.parity = parity
         self._port_handler.stopbits = stop_bits
-        self._port_handler.bytesize = byte_size
+        self._port_handler.bytesize = BYTE_SIZE
         self._port_handler.timeout = DEFAULT_TIMOUT_SEC
 
         self._data_buffer = []

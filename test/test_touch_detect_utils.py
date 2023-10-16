@@ -52,7 +52,7 @@ class TestTouchDetectUtils:
     """
 
 # pylint: disable=redefined-outer-name
-    def test_to_taxel_array_correct_size(self):
+    def test_to_taxel_array_right_size(self):
         """Convert array with correct size.
         """
         # Arrange

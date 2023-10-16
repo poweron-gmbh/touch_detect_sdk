@@ -10,7 +10,7 @@ DEFAULT_DESCRIPTION = 'Testing Event'
 TEST_MESSAGE = 'test'
 
 
-class Publisher(object):
+class Publisher():
     """Helper class for testing events
     """
 
