@@ -90,6 +90,16 @@ class TouchDetectDevice(object):
         with self._lock:
             return self._address
 
+    @address.setter
+    def address(self, data: str) -> str:
+        """Set address in touch detect.
+
+        :param data: new data array.
+        :type data: np.array
+        """
+        with self._lock:
+            self._address = data
+
     @property
     def device_type(self) -> TouchDetectType:
         """TouchDetect device type.

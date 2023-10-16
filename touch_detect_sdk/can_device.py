@@ -10,8 +10,8 @@ from .touch_detect_device import TouchDetectDevice, TouchDetectType
 
 # Default values for serial port.
 BAUDRATE = 1000000
-PARITY = serial.PARITY_NONE
-STOP_BITS = serial.STOPBITS_ONE
+PARITY = 'N'
+STOP_BITS = 1
 BYTE_SIZE = 8
 DEFAULT_TIMOUT_SEC = 0.5
 
