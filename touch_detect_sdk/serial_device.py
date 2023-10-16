@@ -4,6 +4,7 @@
 
 from enum import Enum, unique
 
+import numpy as np
 import serial  # pyserial
 
 from .event import Event
@@ -39,13 +40,13 @@ class SerialEventData():
     """Encapsulates event data for serial events.
     """
 
-    def __init__(self, event: SerialEventType, data: list = None):
+    def __init__(self, event: SerialEventType, data: np.array = None):
         """Initialize class
 
         :param event: type of event triggered
         :type event: SerialEventType
         :param data: relevant data for the event, defaults to None
-        :type data: list, optional
+        :type data: numpy array, optional
         """
         self.type = event
         self.data = data
@@ -57,7 +58,7 @@ class SerialDevice(TouchDetectDevice):
     # Event object
     events = Event('')
 
-    def __init__(self, address: str, name: str = None,
+    def __init__(self, address: str = None, name: str = None,
                  taxels_array_size: tuple = (6, 6)):
         """Initialize Serial object.
 
@@ -86,6 +87,17 @@ class SerialDevice(TouchDetectDevice):
         self._port_handler.bytesize = BYTE_SIZE
         self._port_handler.timeout = DEFAULT_TIMOUT_SEC
 
+    @TouchDetectDevice.address.setter
+    def address(self, data: str) -> str:
+        """Set address in touch detect.
+
+        :param data: new data array.
+        :type data: np.array
+        """
+        self._port_handler.port = data
+        with self._lock:
+            self._address = data
+
     @property
     def port_handler(self) -> serial.Serial:
         """port_handler getter.
@@ -93,13 +105,14 @@ class SerialDevice(TouchDetectDevice):
         with self._lock:
             return self._port_handler
 
-    def fire_event(self, event_type: SerialEventType, event_data: list = None):
+    def fire_event(self, event_type: SerialEventType,
+                   event_data: np.array = None):
         """Fires the event of the class.
 
         :param event_type: reason why the event was triggered.
-        :type event_type: WsgEventType
+        :type event_type: SerialEventType
         :param event_data: useful data linked to the event, defaults to None
-        :type event_data: list, optional
+        :type event_data: numpy array, optional
         """
         event_data = SerialEventData(event_type, event_data)
         self.events(event_data)

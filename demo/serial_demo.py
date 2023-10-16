@@ -14,8 +14,9 @@ from pynput import keyboard
 # This allows demo.py see modules that are one level up.
 sys.path.append(os.getcwd())
 # pylint: disable=wrong-import-position
+from touch_detect_sdk.event import EventSuscriberInterface  # noqa
 from touch_detect_sdk.serial_touch_detect_sdk import SerialTouchSdk  # noqa
-from touch_detect_sdk.serial_device import SerialEventType, SerialEventData  # noqa
+from touch_detect_sdk.serial_device import SerialEventData, SerialEventType  # noqa
 from touch_detect_sdk.serial_device import SerialDevice  # noqa
 # pylint: enable=wrong-import-position
 
@@ -26,36 +27,45 @@ EXIT_FAILURE = 1
 # Device port to connect.
 SERIAL_PORT = 'COM38'
 
-# Update rate of the loop for handling the communication.
+# Update rate of checking keyboard input.
 LOOP_RATE_SEC = 0.010
 
+# Events for handling communication with events.
 stop_serial_data_loop = Event()
 stop_key_pressed = Event()
 
 # pylint: disable=global-variable-not-assigned
 
 
-def event_handler(_: object, event_info: SerialEventData):
-    """This function can be suscribed to any Serial TouchDetect event
-
-    :param sender: identifies the device who raised the event.
-    :type sender: object
-    :param EventInfo: event information
-    :type EventInfo: SerialEventType
+class EventSuscriber(EventSuscriberInterface):
+    """Demo class that suscribes to the events raised by the SerialDevice.
     """
-    global stop_serial_data_loop
-    if event_info.type == SerialEventType.CONNECTED:
-        print('Successfully connnected to ' + SERIAL_PORT)
-    elif event_info.type == SerialEventType.DISCONNECTED:
-        print('Successfully disconnected to ' + SERIAL_PORT)
-        stop_serial_data_loop.set()
-    elif event_info.type == SerialEventType.ERROR_OPENING_PORT:
-        print('Error connecting to ' + SERIAL_PORT)
-        stop_serial_data_loop.set()
-    elif event_info.type == SerialEventType.NEW_DATA:
-        sensor_data = event_info.data[0]
-        print('New data: ')
-        print(sensor_data)
+
+    def touch_detect_event(self, sender: object, earg: object):
+        """This function gets called on every event.
+
+        :param sender: identifies the device who raised the event.
+        :type sender: object
+        :param EventInfo: event information
+        :type EventInfo: SerialEventType
+        """
+        global stop_serial_data_loop
+        # Check if the event is valid.
+        if not isinstance(earg, SerialEventData):
+            print('Invalid data received from event')
+            return
+
+        if earg.type == SerialEventType.CONNECTED:
+            print('Successfully connnected to ' + SERIAL_PORT)
+        elif earg.type == SerialEventType.DISCONNECTED:
+            print('Successfully disconnected to ' + SERIAL_PORT)
+            stop_serial_data_loop.set()
+        elif earg.type == SerialEventType.ERROR_OPENING_PORT:
+            print('Error connecting to ' + SERIAL_PORT)
+            stop_serial_data_loop.set()
+        elif earg.type == SerialEventType.NEW_DATA:
+            print('New data: ')
+            print(earg.data)
 
 
 def on_key_pressed(key):
@@ -75,13 +85,18 @@ def main():
     """
     global stop_serial_data_loop
     global stop_key_pressed
+    
     serial_touch_detect = SerialTouchSdk()
     td_device = SerialDevice(SERIAL_PORT)
-    td_device.events += event_handler
+
+    # Only objects that inherit from EventSuscriberInterface
+    # can be suscribed.
+    event_suscriber = EventSuscriber()
+    td_device.events += event_suscriber
 
     # Attempt to open the port.
     serial_touch_detect.connect(td_device)
-
+    # Set a listener for keyboard.
     listener = keyboard.Listener(
         on_press=on_key_pressed)
     listener.start()

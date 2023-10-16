@@ -279,8 +279,8 @@ class SerialTouchSdk:
                                         cls.disconnect(device)
                                 continue
                             cls._process_frame(device, new_data)
-                            device.fire_event(SerialEventType.NEW_DATA, [
-                                              device.taxels_array])
+                            device.fire_event(SerialEventType.NEW_DATA,
+                                              device.taxels_array)
 
                     except (RuntimeError, ConnectionAbortedError):
                         logging.error(
