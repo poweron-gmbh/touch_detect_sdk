@@ -136,9 +136,9 @@ class TouchDetectDevice():
         """
         with self._lock:
             if self._taxels_array_size != data.shape:
-                logging.error(
-                    '''Attempt to write touch_detect_device array
-                     with different size.''')
+                log_msg = 'Attempt to write touch_detect_device ' \
+                    'array with different size.'
+                logging.error(log_msg)
                 return
             self._taxel_array = data
 

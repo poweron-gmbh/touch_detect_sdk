@@ -29,8 +29,11 @@ class Event():
         self._lock = Lock()
         self._suscriber_list = []
 
-    def _getfunctionlist(self):
+    def _getfunctionlist(self) -> list:
         """ Get reference to internal attributes of the class
+
+        :return: list of suscribers
+        :rtype: list
         """
 
         with self._lock:
@@ -44,6 +47,14 @@ class Event():
         else:
             raise TypeError('''Only EventSuscriberInterface
                             objects can be added to EventHandler''')
+        return self
+
+    def __sub__(self, func):
+        """ Removes a suscriber from the event.
+        """
+        if func in self._getfunctionlist():
+            self._getfunctionlist().remove(func)
+            return self
         return self
 
     def __call__(self, earg=None):
