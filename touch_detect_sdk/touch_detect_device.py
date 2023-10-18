@@ -28,7 +28,7 @@ class ConnectionStatus(Enum):
     CONNECTION_LOST = 2
 
 
-class TouchDetectDevice(object):
+class TouchDetectDevice():
     """Represents a Touch Detect device.
     """
 
@@ -159,24 +159,6 @@ class TouchDetectDevice(object):
         """
         with self._lock:
             self._connection_status = data
-
-    @property
-    def rotation(self) -> ConnectionStatus:
-        """Status of connection of the device.
-        :rtype: ConnectionStatus
-        """
-        with self._lock:
-            return self._rotation
-
-    @rotation.setter
-    def rotation(self, data: int) -> None:
-        """Set connection status of device.
-
-        :param data: new status.
-        :type data: ConnectionStatus
-        """
-        with self._lock:
-            self._rotation = data
 
     @property
     def acquisition_running(self) -> bool:

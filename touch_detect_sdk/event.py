@@ -5,7 +5,7 @@
 from threading import Lock
 
 
-class EventSuscriberInterface(object):
+class EventSuscriberInterface():
     """Interface for event suscribers
     """
 

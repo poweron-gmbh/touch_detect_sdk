@@ -69,6 +69,7 @@ class CanFrameDecoder:
             return result.reshape((6, 6))
         except serial.SerialException:
             logging.error('Error decoding package')
+            return None
 
     @staticmethod
     def check_frame_format(frame: bytes) -> bool:

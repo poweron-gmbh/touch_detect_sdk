@@ -61,7 +61,7 @@ class BleTouchSdk:
         """
         # Check if device was already connected.
         if ble_device.connection_status == ConnectionStatus.CONNECTED:
-            return
+            return None
 
         thread = Thread(target=ble_device.connection_thread)
         thread.start()
@@ -69,7 +69,7 @@ class BleTouchSdk:
         return thread
 
     @classmethod
-    def disconnect(cls, ble_device: BleDevice) -> Thread:
+    def disconnect(cls, ble_device: BleDevice):
         """Disconnects BLE device.
 
         :param ble_device: device to disconnect

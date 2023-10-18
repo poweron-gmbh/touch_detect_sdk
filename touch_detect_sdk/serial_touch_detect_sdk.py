@@ -177,7 +177,6 @@ class SerialTouchSdk:
                 serial_device.port_handler.write(reply)
                 serial_device.status = SerialDeviceStatus.IDLE
                 serial_device.timeout_count = 0
-                return
             # Ignore non-valid packages.
             elif (frame_type == FRAME_DATA and
                     len(data) == SERIAL_DATA_FRAME_SIZE):
@@ -211,7 +210,8 @@ class SerialTouchSdk:
         if start_index == -1:
             # There is no starting frame, ignore package.
             return None
-        elif start_index != 0:
+
+        if start_index != 0:
             # Erase all the bytes that are before the start of the package
             serial_data = serial_data[start_index:]
 

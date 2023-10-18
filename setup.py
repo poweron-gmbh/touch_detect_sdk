@@ -1,3 +1,7 @@
+#!/usr/bin/python3
+
+""" Setup file for the TouchDetect SDK."""
+
 from setuptools import setup
 
 setup(
