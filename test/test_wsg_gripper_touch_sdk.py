@@ -13,6 +13,7 @@ from pytest_mock import MockerFixture
 
 import numpy as np
 
+from touch_detect_sdk.event import EventSuscriberInterface
 from touch_detect_sdk.wsg_gripper_touch_sdk import WsgGripperTouchSdk
 from touch_detect_sdk.wsg_device import WsgDevice, WsgEventData, WsgEventType
 
@@ -129,7 +130,7 @@ class WsgEmulator():
                 break
 
 
-class EventTester:
+class EventTester(EventSuscriberInterface):
     """Handles events from WsgGripperTouchSdk.
     """
 
@@ -137,31 +138,34 @@ class EventTester:
         self.type = WsgEventType.DISCONNECTED
         self.call_count = 0
 
-    def event_handler(self, sender: object, event_data: WsgEventData):
+    def touch_detect_event(self, sender: object, earg: object):
         """This function can be suscribed to any WsgGripperTouchSdk event
 
         :param sender: identifies the device who raised the event.
         :type sender: object
-        :param event_data: event information
-        :type event_data: WsgEventData
+        :param earg: event information
+        :type earg: WsgEventData
         """
+
+        # Check if the event is valid.
+        assert isinstance(earg, WsgEventData)
+
         # Filter events only from one sensor.
-        if sender.address == socket.gethostname():
-            if event_data.type == WsgEventType.CONNECTED:
-                self.type = WsgEventType.CONNECTED
-                self.call_count += 1
-            elif event_data.type == WsgEventType.DISCONNECTED:
-                self.type = WsgEventType.DISCONNECTED
-                self.call_count += 1
-            elif event_data.type == WsgEventType.ERROR_OPENING_PORT:
-                self.type = WsgEventType.ERROR_OPENING_PORT
-                self.call_count += 1
-            elif event_data.type == WsgEventType.ERROR_CLOSING_PORT:
-                self.type = WsgEventType.ERROR_CLOSING_PORT
-                self.call_count += 1
-            elif event_data.type == WsgEventType.NEW_DATA:
-                self.type = WsgEventType.NEW_DATA
-                self.call_count += 1
+        if earg.type == WsgEventType.CONNECTED:
+            self.type = WsgEventType.CONNECTED
+            self.call_count += 1
+        elif earg.type == WsgEventType.DISCONNECTED:
+            self.type = WsgEventType.DISCONNECTED
+            self.call_count += 1
+        elif earg.type == WsgEventType.ERROR_OPENING_PORT:
+            self.type = WsgEventType.ERROR_OPENING_PORT
+            self.call_count += 1
+        elif earg.type == WsgEventType.ERROR_CLOSING_PORT:
+            self.type = WsgEventType.ERROR_CLOSING_PORT
+            self.call_count += 1
+        elif earg.type == WsgEventType.NEW_DATA:
+            self.type = WsgEventType.NEW_DATA
+            self.call_count += 1
 
 
 @pytest.fixture
@@ -267,7 +271,7 @@ class TestWsgGripperTouchSdk:
         # Arrange
         uut = WsgGripperTouchSdk()
         test_device = WsgDevice(socket.gethostname(), '')
-        test_device.events += event_tester_setup.event_handler
+        test_device.events += event_tester_setup
 
         # Act
         thread = uut.connect(test_device)
@@ -282,7 +286,7 @@ class TestWsgGripperTouchSdk:
         # Arrange
         uut = WsgGripperTouchSdk()
         test_device = WsgDevice(socket.gethostname(), '')
-        test_device.events += event_tester_setup.event_handler
+        test_device.events += event_tester_setup
         wsg_emulator = WsgEmulator()
 
         # Act
@@ -306,7 +310,7 @@ class TestWsgGripperTouchSdk:
         # Arrange
         uut = WsgGripperTouchSdk()
         test_device = WsgDevice(socket.gethostname(), '')
-        test_device.events += event_tester_setup.event_handler
+        test_device.events += event_tester_setup
         wsg_emulator = WsgEmulator()
 
         # Act

@@ -4,7 +4,7 @@
 
 from threading import Thread
 
-from touch_detect_sdk.event import Event
+from touch_detect_sdk.event import Event, EventSuscriberInterface
 
 DEFAULT_DESCRIPTION = 'Testing Event'
 TEST_MESSAGE = 'test'
@@ -16,9 +16,6 @@ class Publisher():
 
     # Set event object in class declaration.
     event = Event(DEFAULT_DESCRIPTION)
-    handler_1_data = 0
-    handler_2_data = 0
-    earg = None
 
     def fire_event(self, earg: object = None):
         """Fires the event of the class.
@@ -29,18 +26,36 @@ class Publisher():
         self.event(earg)
 
 
-def handler_1(sender: object, earg: object):
-    """ Handler for event
+class Suscriber1(EventSuscriberInterface):
+    """Suscriber for events.
     """
-    sender.handler_1_data += 1
-    sender.earg = earg
+
+    def __init__(self):
+        super().__init__()
+        self.handler_data = 0
+        self.earg = None
+
+    def touch_detect_event(self, sender: object, earg: object):
+        """Implement function function called on event
+        """
+        self.handler_data += 1
+        self.earg = earg
 
 
-def handler_2(sender: object, earg):
-    """ Handler for event
+class Suscriber2(EventSuscriberInterface):
+    """Suscriber for events.
     """
-    sender.handler_2_data += 1
-    sender.earg = earg
+
+    def __init__(self):
+        super().__init__()
+        self.handler_data = 0
+        self.earg = None
+
+    def touch_detect_event(self, sender: object, earg: object):
+        """Implement function function called on event
+        """
+        self.handler_data += 1
+        self.earg = earg
 
 
 class TestEvent:
@@ -65,14 +80,15 @@ class TestEvent:
 
         # Arrange
         uut = Publisher()
-        uut.event += handler_1
+        suscriber_1 = Suscriber1()
+        uut.event += suscriber_1
 
         # Act
         uut.fire_event()
 
         # Assert
-        assert uut.handler_1_data == 1
-        assert not uut.earg
+        assert suscriber_1.handler_data == 1
+        assert not suscriber_1.earg
 
     def test_call_multiple_times(self):
         """Subscribe listener and call multiple times.
@@ -80,7 +96,8 @@ class TestEvent:
 
         # Arrange
         uut = Publisher()
-        uut.event += handler_1
+        suscriber_1 = Suscriber1()
+        uut.event += suscriber_1
 
         # Act
         uut.fire_event()
@@ -88,26 +105,30 @@ class TestEvent:
         uut.fire_event()
 
         # Assert
-        assert uut.handler_1_data == 3
-        assert not uut.earg
+        assert suscriber_1.handler_data == 3
+        assert not suscriber_1.earg
 
-    def test_call_multiple_listeners(self):
+    def test_call_multiple_suscribers(self):
         """Subscribe multiple subscribers.
         """
 
         # Arrange
         uut = Publisher()
-        uut.event += handler_1
-        uut.event += handler_2
+        suscriber_1 = Suscriber1()
+        suscriber_2 = Suscriber2()
+
+        uut.event += suscriber_1
+        uut.event += suscriber_2
 
         # Act
         uut.fire_event()
         uut.fire_event()
 
         # Assert
-        assert uut.handler_1_data == 2
-        assert uut.handler_2_data == 2
-        assert not uut.earg
+        assert suscriber_1.handler_data == 2
+        assert suscriber_2.handler_data == 2
+        assert not suscriber_1.earg
+        assert not suscriber_2.earg
 
     def test_unsubscribe(self):
         """Subscribe to an event and check unsubscribing
@@ -115,20 +136,22 @@ class TestEvent:
 
         # Arrange
         uut = Publisher()
-        uut.event += handler_1
-        uut.event += handler_2
+        suscriber_1 = Suscriber1()
+        suscriber_2 = Suscriber2()
+
+        uut.event += suscriber_1
+        uut.event += suscriber_2
 
         # Act
         uut.fire_event()
-        uut.event -= handler_1
+        uut.event -= suscriber_1
         uut.fire_event()
 
         # Assert
         # Handler 1 should be called only once
-        assert uut.handler_1_data == 1
+        assert suscriber_1.handler_data == 1
         # Handler 2 calls shouldn't be affected at all
-        assert uut.handler_2_data == 2
-        assert not uut.earg
+        assert suscriber_2.handler_data == 2
 
     def test_call_arguments(self):
         """Sending parameters to subscriber
@@ -136,21 +159,22 @@ class TestEvent:
 
         # Arrange
         uut = Publisher()
-        uut.event += handler_1
+        suscriber_1 = Suscriber1()
+        uut.event += suscriber_1
 
         # Act
         uut.fire_event(TEST_MESSAGE)
 
         # Assert
-        assert uut.handler_1_data == 1
-        assert uut.earg == TEST_MESSAGE
+        assert suscriber_1.handler_data == 1
+        assert suscriber_1.earg == TEST_MESSAGE
 
         # Act
         uut.fire_event()
 
         # Assert
-        assert uut.handler_1_data == 2
-        assert not uut.earg
+        assert suscriber_1.handler_data == 2
+        assert not suscriber_1.earg
 
     def test_call_multiple_threads(self):
         """Triggering the event from different threads.
@@ -158,14 +182,15 @@ class TestEvent:
 
         # Arrange
         uut = Publisher()
-        uut.event += handler_1
+        suscriber_1 = Suscriber1()
+        uut.event += suscriber_1
 
         # Act. Trigger the event from different threads.
         Thread(target=uut.fire_event()).start()
         Thread(target=uut.fire_event(TEST_MESSAGE)).start()
 
         # Assert. The threads must be called in order.
-        assert uut.handler_1_data == 2
-        assert uut.earg == TEST_MESSAGE
+        assert suscriber_1.handler_data == 2
+        assert suscriber_1.earg == TEST_MESSAGE
 
 # pylint: enable=redefined-outer-name

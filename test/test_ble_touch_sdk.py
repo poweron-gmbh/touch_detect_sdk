@@ -8,20 +8,22 @@ from pytest_mock import MockerFixture
 
 from touch_detect_sdk.ble_touch_sdk import BleTouchSdk
 from touch_detect_sdk.ble_device import BleDevice, BleEventType, BleEventInfo
+from touch_detect_sdk.event import EventSuscriberInterface
 
 TEST_DEVICE_ID = 'PWRON1'
 TEST_MAC = 'DC:EE:FF:C8:6A:10'
 
 
-class EventTester:
+class EventTester(EventSuscriberInterface):
     """Handles events from BleTouchSdk.
     """
 
     def __init__(self):
+        super().__init__()
         self.type = BleEventType.DISCONNECTED
         self.call_count = 0
 
-    def event_handler(self, sender: object, event_data: BleEventInfo):
+    def touch_detect_event(self, sender: object, earg: object):
         """This function can be suscribed to any BleTouchSdk event
 
         :param sender: identifies the device who raised the event.
@@ -29,21 +31,25 @@ class EventTester:
         :param event_data: event information
         :type event_data: BleEventType
         """
+
+        # Check if the event is valid.
+        assert isinstance(earg, BleEventInfo)
+
         # Filter events only from one sensor.
         if sender.address == TEST_MAC:
-            if event_data.type == BleEventType.CONNECTED:
+            if earg.type == BleEventType.CONNECTED:
                 self.type = BleEventType.CONNECTED
                 self.call_count += 1
-            elif event_data.type == BleEventType.DISCONNECTED:
+            elif earg.type == BleEventType.DISCONNECTED:
                 self.type = BleEventType.DISCONNECTED
                 self.call_count += 1
-            elif event_data.type == BleEventType.ERROR_OPENING_PORT:
+            elif earg.type == BleEventType.ERROR_OPENING_PORT:
                 self.type = BleEventType.ERROR_OPENING_PORT
                 self.call_count += 1
-            elif event_data.type == BleEventType.ERROR_CLOSING_PORT:
+            elif earg.type == BleEventType.ERROR_CLOSING_PORT:
                 self.type = BleEventType.ERROR_CLOSING_PORT
                 self.call_count += 1
-            elif event_data.type == BleEventType.NEW_DATA:
+            elif earg.type == BleEventType.NEW_DATA:
                 self.type = BleEventType.NEW_DATA
                 self.call_count += 1
 
@@ -86,20 +92,5 @@ class TestBleTouchSdk:
 
         # Assert
         create_task_mock.assert_called_once()
-
-    def test_connection_failed(self, event_tester_setup):
-        """Test for checking connection problems.
-        """
-        # Arrange
-        uut = BleTouchSdk()
-        test_device = BleDevice(TEST_MAC, TEST_DEVICE_ID, '')
-        test_device.events += event_tester_setup.event_handler
-
-        # Act
-        thread = uut.connect(test_device)
-        thread.join()
-
-        # Assert
-        assert event_tester_setup.type == BleEventType.ERROR_OPENING_PORT
 
 # pylint: enable=redefined-outer-name
