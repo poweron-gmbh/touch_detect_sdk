@@ -1,3 +1,5 @@
+""" Setup file for the TouchDetect SDK"""
+
 from setuptools import setup
 
 setup(
@@ -7,5 +9,5 @@ setup(
     author='Gonzalo Cervetti',
     author_email='gonzalo@poweron.one',
     packages=['touch_detect_sdk'],
-    install_requires=['bleak', 'numpy', 'future', 'pyserial', 'pynput', 'python4yahdlc']
+    install_requires=['bleak', 'numpy', 'future', 'pyserial', 'python4yahdlc']
 )
