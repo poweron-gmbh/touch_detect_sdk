@@ -9,7 +9,6 @@ import sys
 import time
 
 from threading import Event
-from pynput import keyboard
 
 # This allows demo.py see modules that are one level up.
 sys.path.append(os.getcwd())
@@ -25,14 +24,13 @@ EXIT_SUCCESS = 0
 EXIT_FAILURE = 1
 
 # Device port to connect.
-SERIAL_PORT = 'COM38'
+SERIAL_PORT = 'COM32'
 
 # Update rate of checking keyboard input.
 LOOP_RATE_SEC = 0.010
 
 # Events for handling communication with events.
 stop_serial_data_loop = Event()
-stop_key_pressed = Event()
 
 # pylint: disable=global-variable-not-assigned, too-few-public-methods
 
@@ -68,23 +66,10 @@ class EventSuscriber(EventSuscriberInterface):
             print(earg.data)
 
 
-def on_key_pressed(key):
-    """This function is called when a key is pressed
-    """
-    global stop_key_pressed
-    try:
-        if key == keyboard.Key.esc:
-            stop_key_pressed.set()
-
-    except AttributeError:
-        print(f'special key {key} pressed')
-
-
 def main():
     """Main function of the demo.
     """
     global stop_serial_data_loop
-    global stop_key_pressed
 
     serial_touch_detect = SerialTouchSdk()
     td_device = SerialDevice(SERIAL_PORT)
@@ -96,18 +81,10 @@ def main():
 
     # Attempt to open the port.
     serial_touch_detect.connect(td_device)
-    # Set a listener for keyboard.
-    listener = keyboard.Listener(
-        on_press=on_key_pressed)
-    listener.start()
 
     # Run the demo until the user presses q.
-    print('Running demo. Press ESC to quit')
-    while not stop_serial_data_loop.is_set():
-        time.sleep(LOOP_RATE_SEC)
-        if stop_key_pressed.is_set():
-            serial_touch_detect.disconnect(td_device)
-            break
+    input('Running demo. Press ENTER to quit')
+    serial_touch_detect.disconnect(td_device)
 
     # Wait for the thread to finish.
     while not stop_serial_data_loop.is_set():
