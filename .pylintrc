@@ -59,7 +59,7 @@ confidence=
 #
 # Kubeflow disables string-interpolation because we are starting to use f
 # style strings
-disable=too-few-public-methods
+disable=too-few-public-methods, duplicate-code
 
 
 [REPORTS]
