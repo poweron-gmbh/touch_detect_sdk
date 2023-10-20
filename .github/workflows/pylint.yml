@@ -28,4 +28,4 @@ jobs:
     - name: Analysing the code with pylint
       run: |
         pipenv install --dev
-        pipenv run pylint $(git ls-files '*.py')
+        pipenv run pylint --rcfile=.pylintrc $(git ls-files '*.py')

@@ -10,7 +10,6 @@ future = "*"
 pyserial = "*"
 python4yahdlc = "*"
 keyboard = "*"
-pynput = "*"
 
 [dev-packages]
 pytest = "*"
