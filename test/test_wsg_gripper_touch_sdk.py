@@ -38,7 +38,7 @@ TEST_ENCODED_FRAME_2 = bytearray(
     b'\xaa\xaa\xaa\xbb\x08\x00\x47\x6f\x6e\x7a\x61\x6c\x6f\x21\x6a\x74')
 
 # TCP port for connecting to WSG gripper.
-TEST_TCP_PORT = 1000
+TEST_TCP_PORT = 1030
 
 # Command for reading left touch_detect
 READ_LEFT_SENSOR_COMMAND = bytearray(b'\x01')
@@ -227,7 +227,7 @@ class TestWsgGripperTouchSdk:
         create_task_mock = mocker.patch(
             "touch_detect_sdk.wsg_gripper_touch_sdk.Thread.start")
         uut = WsgGripperTouchSdk()
-        test_device = WsgDevice('', socket.gethostname())
+        test_device = WsgDevice('', TEST_TCP_PORT, socket.gethostname())
 
         # Act
         uut.disconnect(test_device)
@@ -240,7 +240,7 @@ class TestWsgGripperTouchSdk:
         """
         # Arrange
         uut = WsgGripperTouchSdk()
-        test_device = WsgDevice(socket.gethostname(), '')
+        test_device = WsgDevice(socket.gethostname(), TEST_TCP_PORT, '')
         test_device.events += event_tester_setup
 
         # Act
@@ -255,7 +255,7 @@ class TestWsgGripperTouchSdk:
         """
         # Arrange
         uut = WsgGripperTouchSdk()
-        test_device = WsgDevice(socket.gethostname(), '')
+        test_device = WsgDevice(socket.gethostname(), TEST_TCP_PORT, '')
         test_device.events += event_tester_setup
         wsg_emulator = WsgEmulator()
 
@@ -279,7 +279,7 @@ class TestWsgGripperTouchSdk:
         """
         # Arrange
         uut = WsgGripperTouchSdk()
-        test_device = WsgDevice(socket.gethostname(), '')
+        test_device = WsgDevice(socket.gethostname(), TEST_TCP_PORT, '')
         test_device.events += event_tester_setup
         wsg_emulator = WsgEmulator()
 
