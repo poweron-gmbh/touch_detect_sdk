@@ -46,12 +46,15 @@ class WsgDevice(TouchDetectDevice):
     # Event object
     events = Event('')
 
-    def __init__(self, address: str, name: str = None,
+    def __init__(self, address: str, tcp_port: int = TCP_PORT,
+                 name: str = None,
                  taxels_array_size: tuple = (6, 6)):
         """Initialize WSG object.
 
         :param address: Address of the device
         :type address: str
+        :param tcp_port: Port to access to the device
+        :type tcp_port: int
         :param name: Name of serial port
         :type name: str
         :param taxels_array_size: size of the array, defaults to (6, 6)
@@ -65,7 +68,7 @@ class WsgDevice(TouchDetectDevice):
         self._taxels_array_right = np.zeros(shape=self._taxels_array_size)
 
         # Public variables
-        self.tcp_port = TCP_PORT
+        self.tcp_port = tcp_port
 
     @property
     def port_handler(self) -> socket.socket:
