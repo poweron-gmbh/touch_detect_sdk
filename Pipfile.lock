@@ -30,8 +30,24 @@
                 "sha256:ec4a1a2772fb315b992cbaa1153070c7e26968a52b0e2727035f443a1af5c18f"
             ],
             "index": "pypi",
-            "markers": "python_version < '3.13' and python_version >= '3.8'",
             "version": "==0.21.1"
+        },
+        "bleak-winrt": {
+            "hashes": [
+                "sha256:0577d070251b9354fc6c45ffac57e39341ebb08ead014b1bdbd43e211d2ce1d6",
+                "sha256:13ab06dec55469cf51a2c187be7b630a7a2922e1ea9ac1998135974a7239b1e3",
+                "sha256:5a36ff8cd53068c01a795a75d2c13054ddc5f99ce6de62c1a97cd343fc4d0727",
+                "sha256:623ac511696e1f58d83cb9c431e32f613395f2199b3db7f125a3d872cab968a4",
+                "sha256:63130c11acfe75c504a79c01f9919e87f009f5e742bfc7b7a5c2a9c72bf591a7",
+                "sha256:677df51dc825c6657b3ae94f00bd09b8ab88422b40d6a7bdbf7972a63bc44e9a",
+                "sha256:810c00726653a962256b7acd8edf81ab9e4a3c66e936a342ce4aec7dbd3a7263",
+                "sha256:9449cdb942f22c9892bc1ada99e2ccce9bea8a8af1493e81fefb6de2cb3a7b80",
+                "sha256:98c1b5a6a6c431ac7f76aa4285b752fe14a1c626bd8a1dfa56f66173ff120bee",
+                "sha256:a2ae3054d6843ae0cfd3b94c83293a1dfd5804393977dd69bde91cb5099fc47c",
+                "sha256:dd740047a08925bde54bec357391fcee595d7b8ca0c74c87170a5cbc3f97aa0a"
+            ],
+            "markers": "python_version < '3.12' and platform_system == 'Windows'",
+            "version": "==1.2.0"
         },
         "dbus-fast": {
             "hashes": [
@@ -71,7 +87,6 @@
                 "sha256:fc2f4eee50decec8bbfe033f834e6af99fe7c076da30265f307096258367501d"
             ],
             "index": "pypi",
-            "markers": "python_version >= '3.7' and python_version < '4.0'",
             "version": "==2.12.0"
         },
         "future": {
@@ -79,7 +94,6 @@
                 "sha256:34a17436ed1e96697a86f9de3d15a3b0be01d8bc8de9c1dffd59fb8234ed5307"
             ],
             "index": "pypi",
-            "markers": "python_version >= '2.6' and python_version not in '3.0, 3.1, 3.2, 3.3'",
             "version": "==0.18.3"
         },
         "keyboard": {
@@ -126,7 +140,6 @@
                 "sha256:e509cbc488c735b43b5ffea175235cec24bbc57b227ef1acc691725beb230d1c"
             ],
             "index": "pypi",
-            "markers": "python_version < '3.13' and python_version >= '3.9'",
             "version": "==1.26.1"
         },
         "pyserial": {
@@ -189,7 +202,6 @@
                 "sha256:fc7d7f4fac5aa1648aaddff5bdecf4f648f30ba1ad4c53c8fdb32a76a4d1f358"
             ],
             "index": "pypi",
-            "markers": "python_version >= '3.7' and python_version < '4'",
             "version": "==1.3.5"
         },
         "typing-extensions": {
@@ -216,8 +228,15 @@
                 "sha256:2913064abd97b3419d1cc83ea71f042cb821f87e45b9c88cad5ad3c4ea87fe0c"
             ],
             "index": "pypi",
-            "markers": "python_version >= '3.6'",
             "version": "==2.0.4"
+        },
+        "colorama": {
+            "hashes": [
+                "sha256:08695f5cb7ed6e0531a20572697297273c47b8cae5a63ffc6d6ed5c201be6e44",
+                "sha256:4f1d9991f5acc0ca119f9d443620b77f9d6b33703e51011c16baf57afb285fc6"
+            ],
+            "markers": "sys_platform == 'win32'",
+            "version": "==0.4.6"
         },
         "dill": {
             "hashes": [
@@ -297,7 +316,6 @@
                 "sha256:9c90b89e2af7809a1697f6f5f93f1d0e518ac566e2ac4d2af881a69c13ad01ea"
             ],
             "index": "pypi",
-            "markers": "python_full_version >= '3.8.0'",
             "version": "==3.0.1"
         },
         "pytest": {
@@ -306,7 +324,6 @@
                 "sha256:a766259cfab564a2ad52cb1aae1b881a75c3eb7e34ca3779697c23ed47c47069"
             ],
             "index": "pypi",
-            "markers": "python_version >= '3.7'",
             "version": "==7.4.2"
         },
         "pytest-mock": {
@@ -315,7 +332,6 @@
                 "sha256:31a40f038c22cad32287bb43932054451ff5583ff094bca6f675df2f8bc1a6e9"
             ],
             "index": "pypi",
-            "markers": "python_version >= '3.8'",
             "version": "==3.12.0"
         },
         "tomli": {
