@@ -19,7 +19,6 @@ This software development kit (SDK) handles the communication to Touch Detect de
 - [Serial TouchDetect](docs\serial_touch_detect.md)
 - [WSG TouchDetect](docs\wsg_touch_detect.md)
 
-
 ## Project structure
 
 - demo: simple examples that show how each library works.
