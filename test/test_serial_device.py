@@ -25,8 +25,8 @@ from .test_data.sensor_data import TEST_RAW_SENSOR_DATA, \
 
 SERIAL_COMMAND_GET_DATA = bytes(b'\x01')
 
-TEST_PORT_1 = '/dev/pts/2'
-TEST_PORT_2 = '/dev/pts/3'
+TEST_PORT_1 = '/dev/pts/0'
+TEST_PORT_2 = '/dev/pts/1'
 
 # Default values for serial port.
 DEFAULT_BAUDRATE = 115200
