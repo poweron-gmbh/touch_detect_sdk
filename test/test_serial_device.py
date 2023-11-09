@@ -9,12 +9,6 @@ import sys
 import pytest
 from pytest_mock import MockerFixture
 import serial  # pyserial
-
-from touch_detect_sdk.event import EventSuscriberInterface
-from touch_detect_sdk.serial_device import SerialDevice, SerialEventType
-from .test_data.sensor_data import TEST_RAW_SENSOR_DATA, \
-    TEST_CONVERTED_TAXEL_DATA
-
 # pylint: disable=no-name-in-module
 from yahdlc import (
     FRAME_ACK,
@@ -24,12 +18,15 @@ from yahdlc import (
 )
 # pylint: enable=no-name-in-module
 
+from touch_detect_sdk.event import EventSuscriberInterface
+from touch_detect_sdk.serial_device import SerialDevice, SerialEventType
+from .test_data.sensor_data import TEST_RAW_SENSOR_DATA, \
+    TEST_CONVERTED_TAXEL_DATA
+
 SERIAL_COMMAND_GET_DATA = bytes(b'\x01')
 
 TEST_PORT_1 = '/dev/pts/2'
 TEST_PORT_2 = '/dev/pts/3'
-
-TEST_TAXEL_8_X_8 = bytes
 
 # Default values for serial port.
 DEFAULT_BAUDRATE = 115200
