@@ -12,6 +12,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    timeout-minutes: 3
     strategy:
       matrix:
         python-version: ["3.9"]
@@ -23,9 +24,12 @@ jobs:
         python-version: ${{ matrix.python-version }}
     - name: Install dependencies
       run: |
+        sudo apt install socat tmux
         python -m pip install --upgrade pip
         pip install pipenv 
     - name: Run tests
       run: |
+        tmux new-session -d -s socat_virtual_ports 'socat -d -d pty,raw,echo=0,crnl  pty,raw,echo=0,crnl'
         pipenv install --dev
         pipenv run pytest test/
+        tmux kill-session

@@ -50,7 +50,7 @@ Reffer to [README.md](README.md) to get a list of the requisites to use this lib
 
   ```bash
     # Start the demo
-    python.exe .\demo\ble_demo.py
+    python.exe .\demo\serial_demo.py
   ```
 
   The script will connect to the device with the name **SERIAL_PORT**. Once the connection was stablished, it will publish in the console the ADC value of each taxel node.
