@@ -7,10 +7,12 @@ from .test_can_device import TestCanDevice
 from .test_can_frame_decoder import TestCanFrameDecoder
 from .test_can_touch_sdk import TestCanTouchSdk
 from .test_event import TestEvent
+from .test_serial_device import TestSerialDevice
 from .test_wsg_gripper_touch_sdk import TestWsgGripperTouchSdk
 from .test_touch_detect_device import TestTouchDetectDevice
 from .test_wsg_device import TestWsgDevice
 
 __all__ = ["TestBleDevice", "TestBleTouchSdk", "TestCanDevice",
            "TestCanFrameDecoder", "TestCanTouchSdk", "TestEvent",
-           "TestWsgGripperTouchSdk", "TestTouchDetectDevice", "TestWsgDevice"]
+           "TestSerialDevice", "TestWsgGripperTouchSdk",
+           "TestTouchDetectDevice", "TestWsgDevice"]

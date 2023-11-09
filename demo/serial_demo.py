@@ -14,7 +14,6 @@ from threading import Event
 sys.path.append(os.getcwd())
 # pylint: disable=wrong-import-position
 from touch_detect_sdk.event import EventSuscriberInterface  # noqa
-from touch_detect_sdk.serial_touch_detect_sdk import SerialTouchSdk  # noqa
 from touch_detect_sdk.serial_device import SerialEventData, SerialEventType  # noqa
 from touch_detect_sdk.serial_device import SerialDevice  # noqa
 # pylint: enable=wrong-import-position
@@ -64,6 +63,9 @@ class EventSuscriber(EventSuscriberInterface):
         elif earg.type == SerialEventType.NEW_DATA:
             print('New data: ')
             print(earg.data)
+        elif earg.type == SerialEventType.CONNECTION_ERROR:
+            print('Connection error')
+            stop_serial_data_loop.set()
 
 
 def main():
@@ -71,7 +73,6 @@ def main():
     """
     global stop_serial_data_loop
 
-    serial_touch_detect = SerialTouchSdk()
     td_device = SerialDevice(SERIAL_PORT)
 
     # Only objects that inherit from EventSuscriberInterface
@@ -80,11 +81,11 @@ def main():
     td_device.events += event_suscriber
 
     # Attempt to open the port.
-    serial_touch_detect.connect(td_device)
+    td_device.connect()
 
     # Run the demo until the user presses q.
     input('Running demo. Press ENTER to quit')
-    serial_touch_detect.disconnect(td_device)
+    td_device.disconnect()
 
     # Wait for the thread to finish.
     while not stop_serial_data_loop.is_set():
