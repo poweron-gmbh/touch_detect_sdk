@@ -25,8 +25,8 @@ from .test_data.sensor_data import TEST_RAW_SENSOR_DATA, \
 
 SERIAL_COMMAND_GET_DATA = bytes(b'\x01')
 
-TEST_PORT_1 = '/dev/pts/0'
-TEST_PORT_2 = '/dev/pts/1'
+TEST_PORT_1 = '/dev/pts/1'
+TEST_PORT_2 = '/dev/pts/2'
 
 # Default values for serial port.
 DEFAULT_BAUDRATE = 115200
@@ -189,7 +189,7 @@ class TestSerialDevice:
 
         # Act
         uut.connect()
-        time.sleep(0.2)
+        time.sleep(1.0)
 
         # Assert
         assert not fake_suscriber.connected
@@ -208,7 +208,7 @@ class TestSerialDevice:
         # Act
         emulator.start()
         uut.connect()
-        time.sleep(0.2)
+        time.sleep(1.0)
         uut.disconnect()
         emulator.stop()
 
@@ -228,7 +228,7 @@ class TestSerialDevice:
         # Act
         emulator.start()
         uut.connect()
-        time.sleep(0.2)
+        time.sleep(1.0)
         uut.disconnect()
         emulator.stop()
 
@@ -250,7 +250,7 @@ class TestSerialDevice:
         # Act
         emulator.start()
         uut.connect()
-        time.sleep(0.2)
+        time.sleep(1.0)
         uut.disconnect()
         emulator.stop()
 
