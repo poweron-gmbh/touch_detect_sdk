@@ -9,6 +9,7 @@
   - [Prerequisites](#prerequisites)
   - [Run the demos](#run-the-demos)
   - [Test the library](#test-the-library)
+  - [Port this library to your favourite programming language](#port-this-library-to-your-favourite-programming-language)
 
 ## About
 
@@ -102,3 +103,7 @@ To use this library:
   ```
 
 - Use the SDK. Follow [the demo examples](demo).
+
+## Port this library to your favourite programming language
+
+In case you work with a project that doesn't use Python, we provide some [guidelines for writing your own SDK](docs\write_your_own_sdk.md).
