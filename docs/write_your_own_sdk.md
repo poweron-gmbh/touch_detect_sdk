@@ -6,6 +6,7 @@
   - [Table of Contents](#table-of-contents)
   - [About](#about)
   - [Description of communication protocol](#description-of-communication-protocol)
+  - [Sequence number](#sequence-number)
   - [Communication procedure](#communication-procedure)
   - [Sending wrong command](#sending-wrong-command)
   - [Communication Timeout](#communication-timeout)
@@ -28,16 +29,37 @@ The communication to the device is performed through [HDLC](https://en.wikipedia
 - stopbits: 1bit
 - parity: none
 
+## Sequence number
+
+Each package gets identified with sequence number. There are 2 sequence numbers:
+
+- send sequence number (N(S)): Identifies an individual package in a sequence of requests.
+- received sequence number (N(R)): Identifies an individual package in a sequence of replies.
+
+In order to perform a successful communication, these specific values must be used:
+
+```bash
+Acknowledge of frames:
+MASTER ----> TOUCHDETECT   DATA [Seq N(s) = 1, N(r) = 0]
+MASTER <---- TOUCHDETECT   DATA [Seq N(s) = 1, N(r) = 4]
+MASTER <---- TOUCHDETECT    ACK [Seq N(s) = 1, N(r) = 2]
+MASTER ----> TOUCHDETECT    ACK [Seq N(s) = 5, N(r) = 2]
+```
+
+TouchDetect tracks both sequence numbers and that is why it can identify if there are communication problems such as package loss.
+
+For more information about this topic visit [here](https://erg.abdn.ac.uk/users/gorry/course/dl-pages/window.html).
+
 ## Communication procedure
 
 The image below describes the communication procedure:
 
 ![successful_communication](img/successful_communication.png)
 
-1. In order to start the communication, a data package must be sent with the command to execute. The payload of the package is 1 byte which identifies the command to execute.
-2. TouchDetect reads the command, process the data and replies with the information requested. Appart from sending a data package, it also sends an ACK package.
-3. Master will receive both packages one after the other. The master has 50ms to reply with an ACK to the device or otherwise the communication will be considered as failed. The device will not attempt to send the data again but it will flash a red led indicating the failure.
-4. Once ACK is received withing the time frame of 50ms, the device flashes the green led and resets it's state to start a new communication procedure.
+- In order to start the communication, a data package must be sent with the command to execute. The payload of the package is 1 byte which identifies the command to execute.
+- TouchDetect reads the command, process the data and replies with the information requested. Appart from sending a data package, it also sends an ACK package.
+- Master will receive both packages one after the other. The master has 50ms to reply with an ACK to the device or otherwise the communication will be considered as failed. The device will not attempt to send the data again but it will flash a red led indicating the failure.
+- Once ACK is received withing the time frame of 50ms, the device flashes the green led and resets it's state to start a new communication procedure.
 
 ## Sending wrong command
 

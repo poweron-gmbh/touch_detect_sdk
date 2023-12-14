@@ -15,10 +15,10 @@
 
 This software development kit (SDK) handles the communication to Touch Detect devices. It supports:
 
-- [BLE TouchDetect](docs\ble_touch_detect.md)
-- [CAN TouchDetect](docs\can_touch_detect.md)
-- [Serial TouchDetect](docs\serial_touch_detect.md)
-- [WSG TouchDetect](docs\wsg_touch_detect.md)
+- [BLE TouchDetect](docs/ble_touch_detect.md)
+- [CAN TouchDetect](docs/can_touch_detect.md)
+- [Serial TouchDetect](docs/serial_touch_detect.md)
+- [WSG TouchDetect](docs/wsg_touch_detect.md)
 
 ## Project structure
 
@@ -106,4 +106,4 @@ To use this library:
 
 ## Port this library to your favourite programming language
 
-In case you work with a project that doesn't use Python, we provide some [guidelines for writing your own SDK](docs\write_your_own_sdk.md).
+In case you work with a project that doesn't use Python, we provide some [guidelines for writing your own SDK](docs/write_your_own_sdk.md).
